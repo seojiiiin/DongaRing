@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "555538033389",
+    "project_id": "dongaring-df79f",
+    "storage_bucket": "dongaring-df79f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:555538033389:android:5d6424b131736c2048fae4",
+        "android_client_info": {
+          "package_name": "com.example.login"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0CMDm-sPR4dnO1ogFM30S_rlKie9IUos"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

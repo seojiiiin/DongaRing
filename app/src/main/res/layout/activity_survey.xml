@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="30dp">
+
+    <!-- 상단 진행바 -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:progress="60"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="20dp"/>
+
+    <!-- 본문 영역 -->
+    <LinearLayout
+        android:id="@+id/contentArea"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/progressBar"
+        android:layout_above="@+id/nextButton"
+        android:orientation="vertical"
+        android:paddingHorizontal="20dp">
+
+        <!-- 제목 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="어떤 유형인가요?"
+            android:textSize="25sp"
+            android:fontFamily="@font/nanum_gothic_bold"
+            android:layout_marginBottom="5dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Choose your interests."
+            android:textColor="#808080"
+            android:layout_marginBottom="24dp" />
+
+        <!-- 체크리스트 -->
+        <CheckBox
+            android:id="@+id/toVolunteer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="봉사를 하고 싶어요"
+            android:background="@drawable/checkbox_background"
+            android:padding="15dp"
+            android:button="@null"
+            android:layout_marginBottom="8dp"/>
+
+        <CheckBox
+            android:id="@+id/toStudy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="공부하고 싶어요"
+            android:background="@drawable/checkbox_background"
+            android:padding="15dp"
+            android:button="@null"
+            android:layout_marginBottom="8dp"/>
+
+        <CheckBox
+            android:id="@+id/toMusic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="악기를 배우고 싶어요"
+            android:background="@drawable/checkbox_background"
+            android:padding="15dp"
+            android:button="@null"
+            android:layout_marginBottom="8dp"/>
+
+        <CheckBox
+            android:id="@+id/toLiberal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="교양을 쌓고 싶어요"
+            android:background="@drawable/checkbox_background"
+            android:padding="15dp"
+            android:button="@null"
+            android:layout_marginBottom="8dp"/>
+
+        <CheckBox
+            android:id="@+id/toSport"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="스포츠를 즐기고 싶어요"
+            android:background="@drawable/checkbox_background"
+            android:padding="15dp"
+            android:button="@null"
+            android:layout_marginBottom="8dp"/>
+
+        <CheckBox
+            android:id="@+id/toArt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="예술적인 창작 활동을 하고 싶어요"
+            android:background="@drawable/checkbox_background"
+            android:padding="15dp"
+            android:button="@null"/>
+
+    </LinearLayout>
+
+    <!-- 하단 고정 Next 버튼 -->
+    <Button
+        android:id="@+id/nextButton"
+        android:layout_width="300dp"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="40dp"
+        android:backgroundTint="#5EC1C3"
+        android:text="Next"
+        android:textSize="20dp" />
+</RelativeLayout>

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingTop="30dp"
+    android:paddingLeft="30dp"
+    android:paddingRight="30dp">
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:progress="30"
+        android:layout_marginBottom="20dp"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:id="@+id/main"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+
+            <!-- 제목 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:text="회원가입"
+                android:textSize="25dp"
+                android:fontFamily="@font/nanum_gothic_bold"
+                android:layout_marginLeft="35dp"
+                android:layout_marginBottom="5dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:text="Create an account to continue! "
+                android:textColor="#808080"
+                android:layout_marginLeft="35dp"
+                android:layout_marginBottom="24dp" />
+
+            <!-- 입력 -->
+            <EditText
+                android:id="@+id/name"
+                android:layout_width="300dp"
+                android:layout_height="55dp"
+                android:hint="이름"
+                android:padding="10dp"
+                android:background="@drawable/edge"
+                android:inputType="textEmailAddress"
+                android:layout_marginBottom="12dp" />
+
+            <EditText
+                android:id="@+id/email"
+                android:layout_width="300dp"
+                android:layout_height="55dp"
+                android:hint="이메일 주소"
+                android:padding="10dp"
+                android:background="@drawable/edge"
+                android:inputType="textEmailAddress"
+                android:layout_marginBottom="12dp" />
+
+            <TextView
+                android:id="@+id/schoolName"
+                android:layout_width="300dp"
+                android:layout_height="55dp"
+                android:text="숭실대학교"
+                android:textSize="20dp"
+                android:padding="10dp"
+                android:background="@drawable/edge"
+                android:layout_marginBottom="12dp" />
+
+            <EditText
+                android:id="@+id/password"
+                android:layout_width="300dp"
+                android:layout_height="55dp"
+                android:hint="비밀번호"
+                android:padding="10dp"
+                android:background="@drawable/edge"
+                android:inputType="textPassword"
+                android:layout_marginBottom="12dp" />
+
+            <EditText
+                android:id="@+id/passwordCheck"
+                android:layout_width="300dp"
+                android:layout_height="55dp"
+                android:hint="비밀번호 확인"
+                android:padding="10dp"
+                android:background="@drawable/edge"
+                android:inputType="textPassword"
+                android:drawablePadding="10dp"
+                android:layout_marginBottom="30dp" />
+
+            <!-- 회원가입 버튼 -->
+            <Button
+                android:id="@+id/signupButton"
+                android:layout_width="300dp"
+                android:layout_height="60dp"
+                android:text="회원가입"
+                android:textColor="@android:color/white"
+                android:backgroundTint="#5EC1C3"
+                android:layout_marginBottom="10dp" />
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- 회원가입 부분 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="16dp"
+        android:layout_marginBottom="30dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="이미 계정이 있으신가요? "
+            android:textColor="#888888" />
+
+        <TextView
+            android:id="@+id/signupLink"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="로그인"
+            android:textColor="#4A74E9"
+            android:fontFamily="@font/nanum_gothic_bold"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingTop ="4dp"/>
+    </LinearLayout>
+</LinearLayout>
