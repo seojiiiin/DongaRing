@@ -80,7 +80,7 @@ public class SignUpActivity extends AppCompatActivity {
                         String name = binding.name.getText().toString().trim();
                         String number = binding.studentNum.getText().toString().trim();
 
-                        checkStundetNum(name, number, email);
+                        checkStudentNum(name, number, email);
                     } else {
                         Toast.makeText(this, "회원가입 실패: 이미 존재하는 계정일 수 있습니다.", Toast.LENGTH_LONG).show();
                         Log.w("LSJ", "회원가입 실패", task.getException());
@@ -88,7 +88,7 @@ public class SignUpActivity extends AppCompatActivity {
                 });
     }
 
-    private void checkStundetNum(String name, String number, String email) {
+    private void checkStudentNum(String name, String number, String email) {
         db.collection("users")
                 .whereEqualTo("number", number)
                 .get()
