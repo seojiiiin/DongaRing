@@ -43,11 +43,12 @@ public class SignUpActivity extends AppCompatActivity {
         // 회원가입 버튼 클릭 시
         binding.signupButton.setOnClickListener(v -> {
             String name = binding.name.getText().toString().trim();
+            String number = binding.studentNum.getText().toString().trim();
             String email = binding.email.getText().toString().trim();
             String password = binding.password.getText().toString().trim();
             String passwordCheck = binding.passwordCheck.getText().toString().trim();
 
-            if (name.isEmpty() || email.isEmpty() ||  password.isEmpty()) {
+            if (name.isEmpty() || email.isEmpty() || number.isEmpty() ||  password.isEmpty()) {
                 Toast.makeText(this, "모든 정보를 입력해주세요.", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -78,6 +79,7 @@ public class SignUpActivity extends AppCompatActivity {
                         Log.d("LSJ", "회원가입 성공: " + user.getUid());
 
                         createDB(binding.name.getText().toString().trim(),
+                                binding.studentNum.getText().toString().trim(),
                                 email,
                                 password);
 
@@ -91,9 +93,10 @@ public class SignUpActivity extends AppCompatActivity {
                 });
     }
 
-    private void createDB(String name, String email, String password) {
+    private void createDB(String name, String email, String number, String password) {
         Map<String, Object> user = new HashMap<>();
         user.put("name", name);
+        user.put("number", number);
         user.put("email", email);
         user.put("uid", FirebaseAuth.getInstance().getCurrentUser().getUid());
 

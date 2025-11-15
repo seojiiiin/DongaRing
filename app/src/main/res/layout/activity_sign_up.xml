@@ -56,7 +56,15 @@
                 android:hint="이름"
                 android:padding="10dp"
                 android:background="@drawable/edge"
-                android:inputType="textEmailAddress"
+                android:layout_marginBottom="12dp" />
+
+            <EditText
+                android:id="@+id/studentNum"
+                android:layout_width="300dp"
+                android:layout_height="55dp"
+                android:hint="학번"
+                android:padding="10dp"
+                android:background="@drawable/edge"
                 android:layout_marginBottom="12dp" />
 
             <EditText
