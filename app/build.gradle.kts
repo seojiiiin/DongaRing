@@ -10,7 +10,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.login"
+        applicationId = "com.example.mylogin"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
