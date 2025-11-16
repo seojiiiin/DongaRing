@@ -51,7 +51,7 @@
                 android:id="@+id/email"
                 android:layout_width="300dp"
                 android:layout_height="55dp"
-                android:hint="이메일 주소 or 학번"
+                android:hint="이메일 주소"
                 android:padding="10dp"
                 android:background="@drawable/edge"
                 android:inputType="textEmailAddress"

@@ -43,11 +43,12 @@ public class SignUpActivity extends AppCompatActivity {
         // 회원가입 버튼 클릭 시
         binding.signupButton.setOnClickListener(v -> {
             String name = binding.name.getText().toString().trim();
+            String number = binding.studentNum.getText().toString().trim();
             String email = binding.email.getText().toString().trim();
             String password = binding.password.getText().toString().trim();
             String passwordCheck = binding.passwordCheck.getText().toString().trim();
 
-            if (name.isEmpty() || email.isEmpty() ||  password.isEmpty()) {
+            if (name.isEmpty() || email.isEmpty() || number.isEmpty() ||  password.isEmpty()) {
                 Toast.makeText(this, "모든 정보를 입력해주세요.", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -74,16 +75,12 @@ public class SignUpActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         FirebaseUser user = mAuth.getCurrentUser();
-                        Toast.makeText(this, "회원가입 성공!\n" + email, Toast.LENGTH_SHORT).show();
                         Log.d("LSJ", "회원가입 성공: " + user.getUid());
 
-                        createDB(binding.name.getText().toString().trim(),
-                                email,
-                                password);
+                        String name = binding.name.getText().toString().trim();
+                        String number = binding.studentNum.getText().toString().trim();
 
-                        Intent intent = new Intent(SignUpActivity.this, SurveyActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
+                        checkStudentNum(name, number, email);
                     } else {
                         Toast.makeText(this, "회원가입 실패: 이미 존재하는 계정일 수 있습니다.", Toast.LENGTH_LONG).show();
                         Log.w("LSJ", "회원가입 실패", task.getException());
@@ -91,11 +88,45 @@ public class SignUpActivity extends AppCompatActivity {
                 });
     }
 
-    private void createDB(String name, String email, String password) {
+    private void checkStudentNum(String name, String number, String email) {
+        db.collection("users")
+                .whereEqualTo("number", number)
+                .get()
+                .addOnSuccessListener(query -> {
+                    if (!query.isEmpty()) {
+                        Log.d("LSJ", "student number exists");
+                        Toast.makeText(this, "이미 존재하는 학번입니다.", Toast.LENGTH_SHORT).show();
+
+                        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                        if (currentUser != null) currentUser.delete();
+
+                        return;
+                    }
+
+                    Toast.makeText(this, "회원가입 성공!\n" + email, Toast.LENGTH_SHORT).show();
+                    createDB(name, number, email);
+
+                    //다음 화면 이동
+                    Intent intent = new Intent(SignUpActivity.this, SurveyActivity.class)
+                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                })
+                .addOnFailureListener(e -> {
+                    Log.w("LSJ", "Error getting documents.", e)
+;                   Toast.makeText(this, "오류 발생", Toast.LENGTH_SHORT).show();
+                });
+
+    }
+
+    private void createDB(String name, String number, String email) {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+
         Map<String, Object> user = new HashMap<>();
         user.put("name", name);
+        user.put("number", number);
         user.put("email", email);
-        user.put("uid", FirebaseAuth.getInstance().getCurrentUser().getUid());
+        user.put("uid", currentUser.getUid());
 
         db.collection("users")
                 .add(user)
