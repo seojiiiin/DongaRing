@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
         // 회원가입 텍스트 클릭 시 회원가입 화면으로 이동
         binding.signupLink.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, SignUpActivity.class);
+            Intent intent = new Intent(MainActivity.this, MyPageActivity.class);
             startActivity(intent);
         });
     }

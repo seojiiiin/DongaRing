@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+
+    <!-- 책 외곽선 -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#000000"
+        android:strokeWidth="8"
+        android:strokeLineJoin="round"
+        android:strokeLineCap="round"
+        android:pathData="
+            M12,78
+            L12,26
+            Q12,20 18,18
+            Q30,14 45,18
+            Q48,19 50,21
+            Q52,19 55,18
+            Q70,14 82,18
+            Q88,20 88,26
+            L88,78
+            Q88,84 82,86
+            Q70,90 55,86
+            Q52,85 50,84
+            Q48,85 45,86
+            Q30,90 18,86
+            Q12,84 12,78
+            Z" />
+
+    <!-- 가운데 접힌 부분 (책의 중앙 경계선) -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#000000"
+        android:strokeWidth="4"
+        android:strokeLineCap="round"
+        android:pathData="M50,24 L50,82" />
+
+    <!-- 오른쪽 페이지의 줄 (텍스트) -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#000000"
+        android:strokeWidth="5"
+        android:strokeLineCap="round"
+        android:pathData="M60,32 H80" />
+
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#000000"
+        android:strokeWidth="5"
+        android:strokeLineCap="round"
+        android:pathData="M60,42 H80" />
+
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#000000"
+        android:strokeWidth="5"
+        android:strokeLineCap="round"
+        android:pathData="M60,52 H80" />
+
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#000000"
+        android:strokeWidth="5"
+        android:strokeLineCap="round"
+        android:pathData="M60,62 H80" />
+
+</vector>
+
