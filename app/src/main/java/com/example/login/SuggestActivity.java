@@ -1,6 +1,7 @@
 package com.example.login;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -45,7 +46,8 @@ public class SuggestActivity extends AppCompatActivity {
             }
         }
 
-        binding.startButton.setOnClickListener(v -> finish());
+        binding.startButton.setOnClickListener(v ->
+                startActivity(new Intent(SuggestActivity.this, MyPageActivity.class)));
 
     }
 }
