@@ -1,6 +1,7 @@
 package com.example.login;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,18 +19,26 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.login.databinding.ActivityMyPageBinding;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MyPageActivity extends AppCompatActivity {
+    ActivityMyPageBinding binding;
+    FirebaseAuth mAuth;
+    FirebaseUser user;
+    FirebaseFirestore db;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
 
-        ActivityMyPageBinding binding = ActivityMyPageBinding.inflate(getLayoutInflater());
+        binding = ActivityMyPageBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -37,6 +46,30 @@ public class MyPageActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        //유저이름 불러오기
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+        db = FirebaseFirestore.getInstance();
+        if (user == null) {
+            Log.w("LSJ", "user is null");
+            return;
+        }
+
+        db.collection("users")
+                .whereEqualTo("uid", user.getUid())
+                .get()
+                .addOnSuccessListener(query -> {
+                    if (!query.isEmpty()) {
+                        String userName = query.getDocuments().get(0).getString("name");
+                        binding.userName.setText(userName);
+                        Log.d("LSJ", "userName: " + userName);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.w("LSJ", "Error getting documents.", e);
+                });
+
 
         List<CardModel> eventList = new ArrayList<>();
         eventList.add(new CardModel("이벤트 이름1", "동아리 이름1", R.drawable.logo, 10, 22));
