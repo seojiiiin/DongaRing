@@ -51,10 +51,6 @@ public class SurveyActivity extends AppCompatActivity implements CompoundButton.
         });
     }
 
-    private void showToast(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-    }
-
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         String category = null;
