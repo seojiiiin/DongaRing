@@ -41,34 +41,14 @@ public class MyPageActivity extends AppCompatActivity {
         binding = ActivityMyPageBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
-        //유저이름 불러오기
-        mAuth = FirebaseAuth.getInstance();
-        user = mAuth.getCurrentUser();
-        db = FirebaseFirestore.getInstance();
-        if (user == null) {
-            Log.w("LSJ", "user is null");
-            return;
-        }
-
-        db.collection("users")
-                .whereEqualTo("uid", user.getUid())
-                .get()
-                .addOnSuccessListener(query -> {
-                    if (!query.isEmpty()) {
-                        String userName = query.getDocuments().get(0).getString("name");
-                        binding.userName.setText(userName);
-                        Log.d("LSJ", "userName: " + userName);
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Log.w("LSJ", "Error getting documents.", e);
-                });
 
 
         List<CardModel> eventList = new ArrayList<>();
@@ -148,6 +128,33 @@ public class MyPageActivity extends AppCompatActivity {
                 registeredClubListContainer.addView(clubView);
             }
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        //유저이름 불러오기
+        user = mAuth.getCurrentUser();
+
+        if (user == null) {
+            Log.w("LSJ", "user is null");
+            return;
+        }
+
+        db.collection("users")
+                .whereEqualTo("uid", user.getUid())
+                .get()
+                .addOnSuccessListener(query -> {
+                    if (!query.isEmpty()) {
+                        String userName = query.getDocuments().get(0).getString("name");
+                        binding.userName.setText(userName);
+                        Log.d("LSJ", "userName: " + userName);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.w("LSJ", "Error getting documents.", e);
+                });
     }
 }
 class CardModel {

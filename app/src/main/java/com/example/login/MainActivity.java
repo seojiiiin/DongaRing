@@ -69,6 +69,8 @@ public class MainActivity extends AppCompatActivity {
                         // 로그인 성공
                         Log.d("LSJ", "signInWithEmail:success");
                         FirebaseUser user = mAuth.getCurrentUser();
+
+                        startActivity(new Intent(MainActivity.this, MyPageActivity.class));
                         updateUI(user);
                     } else {
                         // 로그인 실패 (존재하지 않는 계정 등)
