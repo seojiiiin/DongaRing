@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "389002095965",
-    "project_id": "mylogin-23bdf",
-    "storage_bucket": "mylogin-23bdf.firebasestorage.app"
+    "project_number": "289391004999",
+    "project_id": "clubs-cd9ac",
+    "storage_bucket": "clubs-cd9ac.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:389002095965:android:4836448170ffcd2cdc0cb4",
+        "mobilesdk_app_id": "1:289391004999:android:58bb8afa42174df5dcd062",
         "android_client_info": {
-          "package_name": "com.example.login"
+          "package_name": "com.example.clubs"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCKhOchSKBjPtyGmDYuP7W2v2T3Ow039Sw"
+          "current_key": "AIzaSyBbAZv6dHHBZ3rRlwavxfOc1vkXHNhm3kc"
         }
       ],
       "services": {
@@ -26,15 +26,15 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:389002095965:android:ae4d57de859c9dc5dc0cb4",
+        "mobilesdk_app_id": "1:289391004999:android:416e5f3d0ff11e95dcd062",
         "android_client_info": {
-          "package_name": "com.example.mylogin"
+          "package_name": "com.example.login"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCKhOchSKBjPtyGmDYuP7W2v2T3Ow039Sw"
+          "current_key": "AIzaSyBbAZv6dHHBZ3rRlwavxfOc1vkXHNhm3kc"
         }
       ],
       "services": {
