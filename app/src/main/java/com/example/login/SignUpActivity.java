@@ -35,6 +35,8 @@ public class SignUpActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+
         binding = ActivitySignUpBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -58,7 +60,7 @@ public class SignUpActivity extends AppCompatActivity {
                 return;
             }
 
-            createUser(email, password);
+            checkStudentNum(name, number, email, password);
         });
 
         // "로그인" 텍스트 클릭 시 로그인 화면으로 이동
@@ -70,25 +72,28 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     // Firebase 회원가입 처리
-    private void createUser(String email, String password) {
+    private void createUser(String name,  String number, String email, String password) {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         FirebaseUser user = mAuth.getCurrentUser();
+                        if (user == null) {
+                            Log.w("LSJ", "user is null after signup");
+                            return;
+                        }
+
+                        Toast.makeText(this, "회원가입 성공", Toast.LENGTH_SHORT).show();
                         Log.d("LSJ", "회원가입 성공: " + user.getUid());
+                        createDB(name, number, email);
 
-                        String name = binding.name.getText().toString().trim();
-                        String number = binding.studentNum.getText().toString().trim();
-
-                        checkStudentNum(name, number, email);
                     } else {
-                        Toast.makeText(this, "회원가입 실패: 이미 존재하는 계정일 수 있습니다.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, "회원가입 실패", Toast.LENGTH_SHORT).show();
                         Log.w("LSJ", "회원가입 실패", task.getException());
                     }
                 });
     }
 
-    private void checkStudentNum(String name, String number, String email) {
+    private void checkStudentNum(String name, String number, String email, String password) {
         db.collection("users")
                 .whereEqualTo("number", number)
                 .get()
@@ -96,20 +101,10 @@ public class SignUpActivity extends AppCompatActivity {
                     if (!query.isEmpty()) {
                         Log.d("LSJ", "student number exists");
                         Toast.makeText(this, "이미 존재하는 학번입니다.", Toast.LENGTH_SHORT).show();
-
-                        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-                        if (currentUser != null) currentUser.delete();
-
                         return;
                     }
 
-                    Toast.makeText(this, "회원가입 성공!\n" + email, Toast.LENGTH_SHORT).show();
-                    createDB(name, number, email);
-
-                    //다음 화면 이동
-                    Intent intent = new Intent(SignUpActivity.this, SurveyActivity.class)
-                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
+                    createUser(name, number, email, password);
                 })
                 .addOnFailureListener(e -> {
                     Log.w("LSJ", "Error getting documents.", e)
@@ -121,6 +116,10 @@ public class SignUpActivity extends AppCompatActivity {
     private void createDB(String name, String number, String email) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
+        if (currentUser == null) {
+            Log.w("LSJ", "currentUser is null");
+            return;
+        }
 
         Map<String, Object> user = new HashMap<>();
         user.put("name", name);
@@ -130,17 +129,15 @@ public class SignUpActivity extends AppCompatActivity {
 
         db.collection("users")
                 .add(user)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.d("LSJ", "DocumentSnapshot added with ID: " + documentReference.getId());
-                    }
+                .addOnSuccessListener(documentReference -> {
+                    Log.d("LSJ", "Document added with ID: " + documentReference.getId());
+
+                    //다음 화면 이동
+                    Intent intent = new Intent(SignUpActivity.this, SurveyActivity.class);
+                    startActivity(intent);
+                    finish();
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("LSJ", "Error adding document", e);
-                    }
-                });
+                .addOnFailureListener(e ->
+                        Log.w("LSJ", "Error adding document", e));
     }
 }

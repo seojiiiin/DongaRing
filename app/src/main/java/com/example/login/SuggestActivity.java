@@ -12,17 +12,30 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.login.databinding.ActivitySuggestBinding;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 
 public class SuggestActivity extends AppCompatActivity {
     ActivitySuggestBinding binding;
+    FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+
         binding = ActivitySuggestBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user == null) {
+            startActivity(new Intent(SuggestActivity.this, MainActivity.class));
+            finish();
+            return;
+        }
 
         ArrayList<String> selectedItems = getIntent().getStringArrayListExtra("selected");
 

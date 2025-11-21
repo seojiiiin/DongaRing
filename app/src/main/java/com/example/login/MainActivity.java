@@ -29,9 +29,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
 
         // Firebase 인증 객체 초기화
         mAuth = FirebaseAuth.getInstance();
@@ -63,6 +69,8 @@ public class MainActivity extends AppCompatActivity {
                         // 로그인 성공
                         Log.d("LSJ", "signInWithEmail:success");
                         FirebaseUser user = mAuth.getCurrentUser();
+
+                        startActivity(new Intent(MainActivity.this, MyPageActivity.class));
                         updateUI(user);
                     } else {
                         // 로그인 실패 (존재하지 않는 계정 등)

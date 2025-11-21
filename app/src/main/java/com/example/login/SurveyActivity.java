@@ -13,6 +13,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.login.databinding.ActivitySurveyBinding;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 
@@ -23,8 +25,18 @@ public class SurveyActivity extends AppCompatActivity implements CompoundButton.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+
         binding = ActivitySurveyBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user == null) {
+            startActivity(new Intent(SurveyActivity.this, MainActivity.class));
+            finish();
+            return;
+        }
 
         binding.toVolunteer.setOnCheckedChangeListener(this);
         binding.toStudy.setOnCheckedChangeListener(this);
@@ -37,10 +49,6 @@ public class SurveyActivity extends AppCompatActivity implements CompoundButton.
             startActivity(new Intent(SurveyActivity.this, SuggestActivity.class)
                     .putStringArrayListExtra("selected", selected));
         });
-    }
-
-    private void showToast(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
