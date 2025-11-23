@@ -23,7 +23,7 @@
                 android:id="@+id/imageArea"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/logo"
+                android:src="@drawable/image"
                 android:scaleType="centerCrop" />
 
             <!-- 새로 추가된 날짜 텍스트 뷰 (우측 상단에 위치) -->
@@ -73,6 +73,7 @@
                 android:textColor="@color/black"
                 android:textSize="12sp" />
             <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/viewButton"
                 android:layout_marginTop="3dp"
                 android:layout_marginBottom="3dp"
                 android:layout_width="match_parent"

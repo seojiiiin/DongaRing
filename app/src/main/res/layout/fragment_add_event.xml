@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?android:windowBackground">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- 제목 -->
+        <TextView
+            android:id="@+id/titleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="이벤트 생성"
+            android:textSize="28dp"
+            android:fontFamily="@font/nanum_gothic_extra_bold"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- 제목 입력 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="제목"
+            android:textSize="14dp"
+            android:layout_marginTop="8dp" />
+
+        <EditText
+            android:id="@+id/titleEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="이벤트 제목"
+            android:background="@android:drawable/edit_text"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- 종류 선택 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="종류"
+            android:textSize="14dp"
+            android:layout_marginBottom="4dp" />
+
+        <Spinner
+            android:id="@+id/categorySpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/event_category"
+            android:layout_marginBottom="12dp" />
+
+        <!-- 날짜 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="일정"
+            android:textSize="14dp"
+            android:layout_marginBottom="4dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            android:layout_marginBottom="12dp">
+
+            <EditText
+                android:id="@+id/startDateEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="시작"
+                android:background="@android:drawable/editbox_background"
+                android:layout_marginRight="4dp"
+                android:focusable="false" />
+
+            <EditText
+                android:id="@+id/endDateEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="종료"
+                android:background="@android:drawable/editbox_background"
+                android:layout_marginLeft="4dp"
+                android:focusable="false" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/extraContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="12dp">
+        </LinearLayout>
+
+        <!-- 장소 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="장소"
+            android:textSize="14dp"
+            android:layout_marginBottom="4dp" />
+
+        <EditText
+            android:id="@+id/location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="장소"
+            android:background="@android:drawable/edit_text"
+            android:layout_marginBottom="12dp"/>
+
+
+        <!-- 내용 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="내용"
+            android:textSize="14dp"
+            android:layout_marginBottom="4dp" />
+
+        <EditText
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:background="@android:drawable/edit_text"
+            android:gravity="top|start"
+            android:hint="내용을 입력하세요"
+            android:padding="10dp"
+            android:layout_marginBottom="10dp" />
+
+        <!-- 공개 범위 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="공개 범위"
+            android:textSize="14dp" />
+
+        <RadioGroup
+            android:id="@+id/radioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <RadioButton
+                android:id="@+id/publicRadio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="전체" />
+
+            <RadioButton
+                android:id="@+id/privateRadio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="내 동아리"
+                android:layout_marginStart="10dp" />
+
+            <RadioButton
+                android:id="@+id/extraRadio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="가입 신청자"
+                android:layout_marginStart="10dp"
+                android:visibility="gone" />
+        </RadioGroup>
+
+        <!-- 파일 첨부 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="파일 첨부"
+            android:textSize="14dp"
+            android:layout_marginBottom="4dp" />
+
+        <EditText
+            android:id="@+id/fileEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="+ 눌러서 .pdf, .jpeg, .png 파일 추가"
+            android:focusable="false"
+            android:background="@android:drawable/edit_text"
+            android:padding="10dp"
+            android:layout_marginBottom="24dp"/>
+
+        <!-- 제출 버튼 -->
+        <Button
+            android:id="@+id/submitButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:text="제출"
+            android:backgroundTint="#4D7DF9"
+            android:textColor="@android:color/white"
+            android:padding="10dp"
+            android:textSize="16dp"
+            android:layout_marginTop="8dp"/>
+    </LinearLayout>
+</ScrollView>
