@@ -52,8 +52,8 @@ public class MyPageActivity extends AppCompatActivity {
 
 
         List<CardModel> eventList = new ArrayList<>();
-        eventList.add(new CardModel("이벤트 이름1", "동아리 이름1", R.drawable.image, 2024, 10, 22));
-        eventList.add(new CardModel("이벤트 이름2", "동아리 이름2", R.drawable.image, 2024, 11, 22));
+        eventList.add(new CardModel("이벤트 이름1", "동아리 이름1", R.drawable.logo, 10, 22));
+        eventList.add(new CardModel("이벤트 이름2", "동아리 이름2", R.drawable.logo, 11, 22));
 
         RecyclerView eventRecyclerView = binding.eventList;
         eventRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
@@ -162,15 +162,13 @@ class CardModel {
     private final String clubName;
     private final int image;
 
-    private final int year;
     private final int month;
     private final int date;
 
-    public CardModel(String title, String clubName, int image, int year, int month, int date) {
+    public CardModel(String title, String clubName, int image, int month, int date) {
         this.title = title;
         this.clubName = clubName;
         this.image = image;
-        this.year = year;
         this.month = month;
         this.date = date;
     }
@@ -183,7 +181,6 @@ class CardModel {
     public int getImage() {
         return image;
     }
-    public int getYear() { return year;  }
 
     public int getMonth() {
         return month;
@@ -196,7 +193,7 @@ class CardModel {
     @Override
     public String toString() {
         return "CardModel{" + "title='" + title + '\'' + ", clubName='" + clubName + '\'' + ", image=" + image +
-                "year="+ year + '\'' + "month=" + month + '\'' + "date=" + date + '}';
+                "month=" + month + '\'' + "date=" + date + '}';
     }
 }
 class ClubModel {
@@ -278,7 +275,7 @@ class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {
             amountArea.setText(event.getClubName());
 
             // 날짜 포맷 설정 (예: "10월 22일")
-            String dateText = event.getYear() + "년 " + event.getMonth() + "월 " + event.getDate() + "일";
+            String dateText = event.getMonth() + "월 " + event.getDate() + "일";
             dateArea.setText(dateText);
         }
     }
