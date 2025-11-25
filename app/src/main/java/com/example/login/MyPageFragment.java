@@ -29,12 +29,8 @@ import java.util.List;
  */
 public class MyPageFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
@@ -76,7 +72,7 @@ public class MyPageFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        // 1. Firebase 초기화
+        // Firebase 초기화
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
@@ -97,28 +93,28 @@ public class MyPageFragment extends Fragment {
 
         LinearLayout clubListContainer = binding.clubListContainer;
         if(clubList.isEmpty()){
-            // RecyclerView가 아닌 컨테이너를 숨깁니다.
+            // RecyclerView가 아닌 컨테이너를 숨김
             clubListContainer.setVisibility(View.GONE);
             binding.emptyClubMessage1.setVisibility(View.VISIBLE);
         }
         else {
-            // clubList의 각 아이템에 대해 뷰를 생성하고 LinearLayout에 추가합니다.
+            // clubList의 각 아이템에 대해 뷰를 생성하고 LinearLayout에 추가
             LayoutInflater inflater = getLayoutInflater();
             for (ClubModel club : clubList) {
-                // club_cardview.xml을 인플레이트합니다.
+                // club_cardview.xml을 인플레이트
                 View clubView = inflater.inflate(R.layout.club_cardview, clubListContainer, false);
 
-                // 뷰의 각 컴포넌트를 찾습니다.
+                // 뷰의 각 컴포넌트
                 ImageView clubLogo = clubView.findViewById(R.id.club_logo_area);
                 TextView clubName = clubView.findViewById(R.id.club_name_text);
                 TextView clubDescription = clubView.findViewById(R.id.club_desc_text);
 
-                // 데이터를 뷰에 설정합니다.
+                // 데이터를 뷰에 설정
                 clubLogo.setImageResource(club.getImage());
                 clubName.setText(club.getClubName());
                 clubDescription.setText(club.getDescription());
 
-                // 생성된 뷰를 컨테이너에 추가합니다.
+                // 생성된 뷰를 컨테이너에 추가
                 clubListContainer.addView(clubView);
             }
         }
@@ -130,30 +126,30 @@ public class MyPageFragment extends Fragment {
         registeredClubList.add(new ClubModel("TTP", "숭실대학교 중앙 테니스동아리", R.drawable.logo));
         registeredClubList.add(new ClubModel("FC 숭실", "숭실대학교 중앙 축구동아리", R.drawable.logo));
 
-        // LinearLayout 컨테이너를 찾습니다.
+        // LinearLayout 컨테이너
         LinearLayout registeredClubListContainer = binding.registeredClubListContainer;
         if(registeredClubList.isEmpty()){
             registeredClubListContainer.setVisibility(View.GONE);
             binding.emptyClubMessage2.setVisibility(View.VISIBLE);
         }
         else {
-            // registeredClubList의 각 아이템에 대해 뷰를 생성하고 LinearLayout에 추가합니다.
+            // registeredClubList의 각 아이템에 대해 뷰를 생성하고 LinearLayout에 추가
             LayoutInflater inflater = getLayoutInflater();
             for (ClubModel club : registeredClubList) {
-                // club_cardview.xml을 인플레이트합니다.
+                // club_cardview.xml을 인플레이트
                 View clubView = inflater.inflate(R.layout.club_cardview, registeredClubListContainer, false);
 
-                // 뷰의 각 컴포넌트를 찾습니다.
+                // 뷰의 각 컴포넌트
                 ImageView clubLogo = clubView.findViewById(R.id.club_logo_area);
                 TextView clubName = clubView.findViewById(R.id.club_name_text);
                 TextView clubDescription = clubView.findViewById(R.id.club_desc_text);
 
-                // 데이터를 뷰에 설정합니다.
+                // 데이터를 뷰에 설정
                 clubLogo.setImageResource(club.getImage());
                 clubName.setText(club.getClubName());
                 clubDescription.setText(club.getDescription());
 
-                // 생성된 뷰를 컨테이너에 추가합니다.
+                // 생성된 뷰를 컨테이너에 추가
                 registeredClubListContainer.addView(clubView);
             }
         }
@@ -229,7 +225,7 @@ public class MyPageFragment extends Fragment {
 
         private final List<CardModel> eventList;
 
-        // 생성자에서 데이터 리스트를 받습니다.
+        // 데이터리스트 받는 생성자
         public EventAdapter(List<CardModel> eventList) {
             this.eventList = eventList;
         }
@@ -249,13 +245,13 @@ public class MyPageFragment extends Fragment {
             holder.bind(event);
         }
 
-        // 데이터의 총 개수를 반환합니다.
+        // 데이터의 총 개수를 반환
         @Override
         public int getItemCount() {
             return eventList.size();
         }
 
-        // ViewHolder 클래스: event_cardview.xml의 뷰들을 관리합니다.
+        // ViewHolder 클래스: event_cardview.xml의 뷰 관리
         static class EventViewHolder extends RecyclerView.ViewHolder {
             private final ImageView imageArea;
             private final TextView dateArea;
