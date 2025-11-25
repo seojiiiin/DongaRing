@@ -55,7 +55,10 @@ public class MyPageActivity extends AppCompatActivity {
         });
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-
+        if(savedInstanceState==null){
+            bottomNavigationView.setSelectedItemId(R.id.nav_mypage);
+            transferTo(MyPageFragment.newInstance("", ""));
+        }
 
 
         //네비게이션바에 리스너 부착
@@ -68,11 +71,11 @@ public class MyPageActivity extends AppCompatActivity {
                     return true;
                 }
                 if(itemId == R.id.nav_club_list){
-                    transferTo(MyPageFragment.newInstance("", ""));
+                    transferTo(ClubListFragment.newInstance("", ""));
                     return true;
                 }
                 if(itemId == R.id.nav_favorites){
-                    transferTo(MyPageFragment.newInstance("", ""));
+                    transferTo(FavoritesFragment.newInstance("", ""));
                     return true;
                 }
                 if(itemId == R.id.nav_mypage){
@@ -89,7 +92,6 @@ public class MyPageActivity extends AppCompatActivity {
 
             }
         });
-        transferTo(MyPageFragment.newInstance("", ""));
     }
     private void transferTo(Fragment fragment){
         getSupportFragmentManager()
