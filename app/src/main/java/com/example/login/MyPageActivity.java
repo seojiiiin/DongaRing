@@ -89,7 +89,7 @@ public class MyPageActivity extends AppCompatActivity {
         bottomNavigationView.setOnItemReselectedListener(new NavigationBarView.OnItemReselectedListener() {
             @Override
             public void onNavigationItemReselected(@NonNull MenuItem menuItem) {
-                
+
             }
         });
     }

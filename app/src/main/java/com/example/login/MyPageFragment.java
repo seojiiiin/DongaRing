@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 
 import com.example.login.databinding.FragmentMyPageBinding;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -35,6 +37,7 @@ public class MyPageFragment extends Fragment {
     private String mParam2;
 
     private FirebaseAuth mAuth;
+    private FirebaseUser user;
     private FirebaseFirestore db;
     private FragmentMyPageBinding binding;
 
@@ -66,6 +69,7 @@ public class MyPageFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         binding = FragmentMyPageBinding.inflate(inflater, container, false);
+
         return binding.getRoot();
     }
 
@@ -76,9 +80,29 @@ public class MyPageFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
+        //user 이름 불러오기ㄱ
+        user = mAuth.getCurrentUser();
+        if (user == null) {
+            Log.w("LSJ", "user is null");
+            return;
+        }
+        db.collection("users")
+                .whereEqualTo("uid", user.getUid())
+                .get()
+                .addOnSuccessListener(query -> {
+                    if (!query.isEmpty()) {
+                        String userName = query.getDocuments().get(0).getString("name");
+                        binding.userName.setText(userName);
+                        Log.d("LSJ", "userName: " + userName);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.w("LSJ", "Error getting documents.", e);
+                });
+
         List<CardModel> eventList = new ArrayList<>();
-        eventList.add(new CardModel("이벤트 이름1", "동아리 이름1", R.drawable.logo, 10, 22));
-        eventList.add(new CardModel("이벤트 이름2", "동아리 이름2", R.drawable.logo, 11, 22));
+        eventList.add(new CardModel("이벤트 이름1", "동아리 이름1", R.drawable.logo, 2024, 10, 22));
+        eventList.add(new CardModel("이벤트 이름2", "동아리 이름2", R.drawable.logo, 2024, 11, 22));
 
         RecyclerView eventRecyclerView = binding.eventList;
         eventRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
@@ -160,13 +184,15 @@ public class MyPageFragment extends Fragment {
         private final String clubName;
         private final int image;
 
+        private final int year;
         private final int month;
         private final int date;
 
-        public CardModel(String title, String clubName, int image, int month, int date) {
+        public CardModel(String title, String clubName, int image, int year, int month, int date) {
             this.title = title;
             this.clubName = clubName;
             this.image = image;
+            this.year = year;
             this.month = month;
             this.date = date;
         }
@@ -180,6 +206,9 @@ public class MyPageFragment extends Fragment {
             return image;
         }
 
+        public int getYear() {
+            return year;
+        }
         public int getMonth() {
             return month;
         }
@@ -191,7 +220,7 @@ public class MyPageFragment extends Fragment {
         @Override
         public String toString() {
             return "CardModel{" + "title='" + title + '\'' + ", clubName='" + clubName + '\'' + ", image=" + image +
-                    "month=" + month + '\'' + "date=" + date + '}';
+                    "year=" + year + '\'' + "month=" + month + '\'' + "date=" + date + '}';
         }
     }
     class ClubModel {
@@ -273,7 +302,7 @@ public class MyPageFragment extends Fragment {
                 amountArea.setText(event.getClubName());
 
                 // 날짜 포맷 설정 (예: "10월 22일")
-                String dateText = event.getMonth() + "월 " + event.getDate() + "일";
+                String dateText = event.getYear() + "년 " + event.getMonth() + "월 " + event.getDate() + "일";
                 dateArea.setText(dateText);
             }
         }
