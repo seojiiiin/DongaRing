@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MyClubFragment"
+    android:orientation="vertical"
+    android:paddingVertical="20dp"
+    android:background="@android:color/background_light">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="10dp">
+
+        <TextView
+            android:id="@+id/clubName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="동아리 이름"
+            android:textSize="25dp"
+            android:fontFamily="@font/nanum_gothic_extra_bold" />
+
+        <!-- Settings Icon -->
+        <ImageView
+            android:id="@+id/ivSettings"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/gear"
+            android:layout_marginEnd="10dp"
+            android:clickable="true"
+            android:focusable="true"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="이벤트"
+        android:textSize="15dp"
+        android:fontFamily="@font/nanum_gothic_bold"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="12dp"/>
+
+
+    <!-- RecyclerView -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvEvents"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="12dp"/>
+
+</LinearLayout>
