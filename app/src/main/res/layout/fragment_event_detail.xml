@@ -46,12 +46,12 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#CCCCCC"
-        android:layout_marginBottom="15dp"/>
+        android:layout_marginTop="10dp"/>
 
     <!--모집 유형일 경우에 띄워질 신청자 정보-->
-    <LinearLayout
-        android:id="@+id/recruitForm"
-        android:layout_width="wrap_content"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/applyInform"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal" />
 
@@ -66,6 +66,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:padding="10dp">
 
         <LinearLayout
