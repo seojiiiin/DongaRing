@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="?android:windowBackground">
+    android:background="@android:color/background_light"
+    android:padding="10dp">
 
     <!--상단 바-->
     <LinearLayout
@@ -29,16 +30,6 @@
             android:text="이벤트 이름"
             android:textSize="25dp"
             android:layout_marginStart="10dp"/>
-
-        <TextView
-            android:id="@+id/editButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="수정"
-            android:textSize="25dp"
-            android:textColor="#0b7cde"
-            android:clickable="true"
-            android:focusable="true"/>
     </LinearLayout>
 
     <!--구분선-->
@@ -47,20 +38,6 @@
         android:layout_height="1dp"
         android:background="#CCCCCC"
         android:layout_marginTop="10dp"/>
-
-    <!--모집 유형일 경우에 띄워질 신청자 정보-->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/applyInform"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" />
-
-    <!--구분선-->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#CCCCCC"
-        android:layout_marginBottom="15dp"/>
 
     <!--이벤트 내용-->
     <ScrollView
@@ -99,5 +76,15 @@
         </LinearLayout>
 
     </ScrollView>
+
+    <Button
+        android:id="@+id/joinButton"
+        android:layout_width="300dp"
+        android:layout_height="60dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:text="참여하기"
+        android:backgroundTint="#57D4FB"
+        android:layout_marginBottom="10dp"
+        android:visibility="gone"/>
 
 </LinearLayout>

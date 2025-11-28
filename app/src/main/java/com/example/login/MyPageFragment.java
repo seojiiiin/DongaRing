@@ -80,7 +80,7 @@ public class MyPageFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        //user 이름 불러오기ㄱ
+        //user 이름 불러오기
         user = mAuth.getCurrentUser();
         if (user == null) {
             Log.w("LSJ", "user is null");
@@ -99,6 +99,15 @@ public class MyPageFragment extends Fragment {
                 .addOnFailureListener(e -> {
                     Log.w("LSJ", "Error getting documents.", e);
                 });
+
+        //설정
+        binding.gear.setOnClickListener(v -> {
+            getParentFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, new SettingFragment())
+                    .addToBackStack(null)
+                    .commit();
+        });
 
         List<CardModel> eventList = new ArrayList<>();
         eventList.add(new CardModel("이벤트 이름1", "동아리 이름1", R.drawable.logo, 2024, 10, 22));
