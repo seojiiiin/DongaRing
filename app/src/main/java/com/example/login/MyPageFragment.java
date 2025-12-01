@@ -19,7 +19,9 @@ import android.widget.TextView;
 import com.example.login.databinding.FragmentMyPageBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -110,6 +112,7 @@ public class MyPageFragment extends Fragment {
         });
 
         List<CardModel> eventList = new ArrayList<>();
+        eventList = new ArrayList<>();
         eventList.add(new CardModel("이벤트 이름1", "동아리 이름1", R.drawable.logo, 2024, 10, 22));
         eventList.add(new CardModel("이벤트 이름2", "동아리 이름2", R.drawable.logo, 2024, 11, 22));
 
@@ -187,6 +190,14 @@ public class MyPageFragment extends Fragment {
             }
         }
 
+    }
+
+    private int[] parseDate(String dateString) {
+        String[] parts = dateString.split("-");
+        int year = Integer.parseInt(parts[0]);
+        int month = Integer.parseInt(parts[1]);
+        int day = Integer.parseInt(parts[2]);
+        return new int[]{year, month, day};
     }
     class CardModel {
         private final String title;
