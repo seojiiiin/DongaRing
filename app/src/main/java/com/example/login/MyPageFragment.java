@@ -1,5 +1,8 @@
 package com.example.login;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -33,7 +36,7 @@ public class MyPageFragment extends Fragment {
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    private String mParam1;
+    private String[] clubs;
     private String mParam2;
 
     private FirebaseAuth mAuth;
@@ -46,10 +49,10 @@ public class MyPageFragment extends Fragment {
     }
 
 
-    public static MyPageFragment newInstance(String param1, String param2) {
+    public static MyPageFragment newInstance(String[] joinedClubs, String param2) {
         MyPageFragment fragment = new MyPageFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
+        args.putStringArray(ARG_PARAM1, joinedClubs);
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
@@ -59,7 +62,7 @@ public class MyPageFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
+            clubs = getArguments().getStringArray(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
@@ -153,40 +156,56 @@ public class MyPageFragment extends Fragment {
         }
 
         // 가입한 동아리 목록
-        List<ClubModel> registeredClubList = new ArrayList<>();
-        registeredClubList.add(new ClubModel("빛누리", "숭실대학교 중앙 필름사진 동아리", R.drawable.logo));
-        registeredClubList.add(new ClubModel("SSUM", "숭실대학교 중앙 농구동아리", R.drawable.logo));
-        registeredClubList.add(new ClubModel("TTP", "숭실대학교 중앙 테니스동아리", R.drawable.logo));
-        registeredClubList.add(new ClubModel("FC 숭실", "숭실대학교 중앙 축구동아리", R.drawable.logo));
-
-        // LinearLayout 컨테이너
         LinearLayout registeredClubListContainer = binding.registeredClubListContainer;
-        if(registeredClubList.isEmpty()){
-            registeredClubListContainer.setVisibility(View.GONE);
+        loadRegisteredClubs(registeredClubListContainer);
+    }
+
+    private void loadRegisteredClubs(LinearLayout container){
+        if (clubs == null || clubs.length == 0){
+            container.setVisibility(View.GONE);
             binding.emptyClubMessage2.setVisibility(View.VISIBLE);
-        }
-        else {
-            // registeredClubList의 각 아이템에 대해 뷰를 생성하고 LinearLayout에 추가
-            LayoutInflater inflater = getLayoutInflater();
-            for (ClubModel club : registeredClubList) {
-                // club_cardview.xml을 인플레이트
-                View clubView = inflater.inflate(R.layout.club_cardview, registeredClubListContainer, false);
-
-                // 뷰의 각 컴포넌트
-                ImageView clubLogo = clubView.findViewById(R.id.club_logo_area);
-                TextView clubName = clubView.findViewById(R.id.club_name_text);
-                TextView clubDescription = clubView.findViewById(R.id.club_desc_text);
-
-                // 데이터를 뷰에 설정
-                clubLogo.setImageResource(club.getImage());
-                clubName.setText(club.getClubName());
-                clubDescription.setText(club.getDescription());
-
-                // 생성된 뷰를 컨테이너에 추가
-                registeredClubListContainer.addView(clubView);
-            }
+            return;
         }
 
+        List<ClubModel> registeredClubList = new ArrayList<>();
+        LayoutInflater inflater = getLayoutInflater();
+
+        for (String clubID : clubs) {
+            if (clubID == null) continue;
+            db.collection("clubs")
+                    .document(clubID)
+                    .get()
+                    .addOnSuccessListener(doc -> {
+                        if (doc.exists()) {
+                            String name = doc.getString("name");
+                            String description = doc.getString("activities");
+                            int image = R.drawable.logo;
+
+                            ClubModel club = new ClubModel(name, description, image);
+                            registeredClubList.add(club);
+
+                            View clubView = inflater.inflate(R.layout.club_cardview, container, false);
+                            ImageView clubLogo = clubView.findViewById(R.id.club_logo_area);
+                            TextView clubName = clubView.findViewById(R.id.club_name_text);
+                            TextView clubDescription = clubView.findViewById(R.id.club_desc_text);
+                            ImageView arrowButton = clubView.findViewById(R.id.arrow_button);
+
+
+                            clubLogo.setImageResource(club.getImage());
+                            clubName.setText(club.getClubName());
+                            clubDescription.setText(club.getDescription());
+                            arrowButton.setOnClickListener(v -> {
+                                startActivity(new Intent(getActivity(), MyClubActivity.class).putExtra("clubID", clubID));
+                            });
+
+                            container.addView(clubView);
+                        }
+
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.w("LSJ", "Error getting documents.", e);
+                    });
+        }
     }
     class CardModel {
         private final String title;

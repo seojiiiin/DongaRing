@@ -20,7 +20,11 @@ import com.google.firebase.Firebase;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
@@ -125,21 +129,68 @@ public class MainActivity extends AppCompatActivity {
     private void signInUser(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
-                    if (task.isSuccessful()) {
-                        // 로그인 성공
-                        Log.d("LSJ", "signInWithEmail:success");
-                        FirebaseUser user = mAuth.getCurrentUser();
-
-                        startActivity(new Intent(MainActivity.this, MyPageActivity.class));
-                        updateUI(user);
-                    } else {
-                        // 로그인 실패 (존재하지 않는 계정 등)
+                    if (!task.isSuccessful()) {
+                        // Authentication 로그인 실패
                         Log.w("LSJ", "signInWithEmail:failure", task.getException());
                         Toast.makeText(MainActivity.this,
                                 "로그인 실패: 존재하지 않는 계정이거나 비밀번호가 틀렸습니다.",
                                 Toast.LENGTH_LONG).show();
                         updateUI(null);
+                        return;
                     }
+
+                    // Authentication 로그인 성공
+                    FirebaseUser user = mAuth.getCurrentUser();
+                    if (user == null) {
+                        Toast.makeText(MainActivity.this, "로그인 오류: 사용자 정보를 불러올 수 없습니다.", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    String uid = user.getUid();
+
+                    // Firestore에서 uid로 사용자 문서 찾기
+                    db.collection("users")
+                            .whereEqualTo("uid", uid)
+                            .limit(1)
+                            .get()
+                            .addOnSuccessListener(query -> {
+
+                                if (query.isEmpty()) {
+                                    // 문서 없음 → 로그인 실패 처리
+                                    Toast.makeText(MainActivity.this,
+                                            "로그인 실패: 사용자 정보가 존재하지 않습니다.",
+                                            Toast.LENGTH_LONG).show();
+                                    mAuth.signOut();
+                                    updateUI(null);
+                                    return;
+                                }
+
+                                // 문서 존재 → 데이터 읽기
+                                DocumentSnapshot doc = query.getDocuments().get(0);
+
+                                List<String> clubsList = (List<String>) doc.get("joinedClubs");
+
+                                // 가입한 동아리가 없는 경우
+                                if (clubsList == null) clubsList = new ArrayList<>();
+
+                                String[] joinedClubs = clubsList.toArray(new String[0]);
+
+                                // 정상 로그인 → MypageActivity 이동
+                                Intent intent = new Intent(MainActivity.this, MyPageActivity.class)
+                                        .putExtra("joinedClub", joinedClubs);
+                                startActivity(intent);
+
+                                updateUI(user);
+                            })
+                            .addOnFailureListener(e -> {
+                                // Firestore 요청 실패 → 로그인 실패 처리
+                                Log.e("LSJ", "Error getting user document", e);
+                                Toast.makeText(MainActivity.this,
+                                        "서버 오류로 사용자 정보를 불러올 수 없습니다.",
+                                        Toast.LENGTH_LONG).show();
+                                mAuth.signOut();
+                                updateUI(null);
+                            });
                 });
     }
 

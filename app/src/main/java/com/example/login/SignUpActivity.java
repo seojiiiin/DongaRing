@@ -96,7 +96,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     private void checkStudentNum(String name, String number, String email, String password) {
         db.collection("users")
-                .whereEqualTo("number", number)
+                .whereEqualTo("studentNumber", number)
                 .get()
                 .addOnSuccessListener(query -> {
                     if (!query.isEmpty()) {

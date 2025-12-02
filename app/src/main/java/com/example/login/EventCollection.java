@@ -35,7 +35,7 @@ public class EventCollection extends AppCompatActivity {
         // 부모 문서 참조 (clubs의 예술창작회 문서 id)
         DocumentReference parentDocRef = db.collection("clubs").document("PzRpqeEHAcxtHwSFltKE");
         // 하위 컬렉션 참조 (예: clubs/각동아리문서/events)
-        CollectionReference subcollectionRef = parentDocRef.collection("evnets");
+        CollectionReference subcollectionRef = parentDocRef.collection("events");
 
 
         Map<String, Object> event1 = new HashMap<>();

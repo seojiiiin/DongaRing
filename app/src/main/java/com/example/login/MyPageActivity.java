@@ -1,5 +1,6 @@
 package com.example.login;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,6 +36,7 @@ public class MyPageActivity extends AppCompatActivity {
     FirebaseAuth mAuth;
     FirebaseUser user;
     FirebaseFirestore db;
+    private String[] joinedClubs = new String[]{};
 
 
     @Override
@@ -54,10 +56,16 @@ public class MyPageActivity extends AppCompatActivity {
             return insets;
         });
 
+        String[] clubsFromIntent = getIntent().getStringArrayExtra("joinedClub");
+        if(clubsFromIntent != null) joinedClubs = clubsFromIntent;
+        else joinedClubs = new String[]{};
+
+
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+
         if(savedInstanceState==null){
             bottomNavigationView.setSelectedItemId(R.id.nav_mypage);
-            transferTo(MyPageFragment.newInstance("", ""));
+            transferTo(MyPageFragment.newInstance(joinedClubs, ""));
         }
 
 
@@ -79,18 +87,16 @@ public class MyPageActivity extends AppCompatActivity {
                     return true;
                 }
                 if(itemId == R.id.nav_mypage){
-                    transferTo(MyPageFragment.newInstance("", ""));
+                    transferTo(MyPageFragment.newInstance(joinedClubs, ""));
                     return true;
                 }
                 return false;
             }
         });
-        //현재 페이지 재선택시 아무것도 안함
-        bottomNavigationView.setOnItemReselectedListener(new NavigationBarView.OnItemReselectedListener() {
-            @Override
-            public void onNavigationItemReselected(@NonNull MenuItem menuItem) {
 
-            }
+        //현재 페이지 재선택시 아무것도 안함
+        bottomNavigationView.setOnItemReselectedListener(menuItem -> {
+
         });
     }
     private void transferTo(Fragment fragment){
