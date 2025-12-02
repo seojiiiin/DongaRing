@@ -104,7 +104,7 @@ public class MyPageFragment extends Fragment {
         binding.gear.setOnClickListener(v -> {
             getParentFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.fragment_container, new SettingFragment())
+                    .replace(R.id.full_screen_container, new SettingFragment())
                     .addToBackStack(null)
                     .commit();
         });

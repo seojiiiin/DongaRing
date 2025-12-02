@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Firebase 인증 객체 초기화
         mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
         // 일반계정 로그인 버튼 클릭 시 로그인 시도
         binding.normalLogin.setOnClickListener(v -> {
