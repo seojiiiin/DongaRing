@@ -18,6 +18,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -123,14 +124,19 @@ public class SignUpActivity extends AppCompatActivity {
 
         Map<String, Object> user = new HashMap<>();
         user.put("name", name);
-        user.put("number", number);
+        user.put("studentNumber", number);
         user.put("email", email);
         user.put("uid", currentUser.getUid());
 
         db.collection("users")
-                .add(user)
+                .document(currentUser.getUid())
+                .set(user)
                 .addOnSuccessListener(documentReference -> {
-                    Log.d("LSJ", "Document added with ID: " + documentReference.getId());
+
+                    // 동기화 호출
+                    updateJoinedClubs(currentUser.getUid(), number);
+
+                    Log.d("LSJ", "Document added with UID");
 
                     //다음 화면 이동
                     Intent intent = new Intent(SignUpActivity.this, SurveyActivity.class);
@@ -140,4 +146,38 @@ public class SignUpActivity extends AppCompatActivity {
                 .addOnFailureListener(e ->
                         Log.w("LSJ", "Error adding document", e));
     }
+
+    private void updateJoinedClubs(String uid, String studentNumber) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("clubs")
+                .get()
+                .addOnSuccessListener(clubQuery -> {
+
+                    for (DocumentSnapshot clubDoc : clubQuery) {
+
+                        String clubId = clubDoc.getId();
+
+                        db.collection("clubs")
+                                .document(clubId)
+                                .collection("members")
+                                .whereEqualTo("studentNumber", studentNumber)
+                                .get()
+                                .addOnSuccessListener(memberQuery -> {
+
+                                    if (!memberQuery.isEmpty()) {
+
+                                        db.collection("users").document(uid)
+                                                .update("joinedClubs",
+                                                        com.google.firebase.firestore.FieldValue.arrayUnion(clubId))
+                                                .addOnSuccessListener(a -> {
+                                                    Log.d("SYNC", "User joinedClubs updated: " + clubId);
+                                                });
+                                    }
+
+                                });
+                    }
+                });
+    }
+
 }
