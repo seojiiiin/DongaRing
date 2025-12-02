@@ -1,27 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/main"
+<FrameLayout
+    android:id="@+id/full_screen_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    android:orientation="vertical">
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- 상단 : Fragment가 들어갈 컨테이너 -->
-    <FrameLayout
-        android:id="@+id/fragment_container"
+    <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/main"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <!-- 하단: 내비게이션 바 -->
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_navigation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:labelVisibilityMode="labeled"
-        app:itemIconSize="30dp"
-        android:background="?android:attr/windowBackground"
-        app:menu="@menu/bottom_navigation_myclub"/>
+        <!-- 상단 : Fragment가 들어갈 컨테이너 -->
+        <FrameLayout
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
-</LinearLayout>
+        <!-- 하단: 내비게이션 바 -->
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottom_navigation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:labelVisibilityMode="labeled"
+            app:itemIconSize="30dp"
+            android:background="?android:attr/windowBackground"
+            app:menu="@menu/bottom_navigation_myclub"/>
+    </LinearLayout>
+
+</FrameLayout>

@@ -6,15 +6,24 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.login.databinding.FragmentMyClubBinding;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -96,6 +105,11 @@ public class MyClubFragment extends Fragment {
                     Log.w("LSJ", "Error getting documents.", e);
                 });
 
+        List<EventModel> myClubEvents = new ArrayList<>();
+        MyClubAdapter myClubAdapter = new MyClubAdapter(myClubEvents, clubID);
+        binding.rvEvents.setAdapter(myClubAdapter);
+        binding.rvEvents.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
+
         db.collection("clubs")
                 .document(clubID)
                 .collection("events")
@@ -105,14 +119,124 @@ public class MyClubFragment extends Fragment {
                         for (DocumentSnapshot doc : query.getDocuments()) {
                             String eventTitle = doc.getString("title");
                             String startDate = doc.getString("startDate");
-                            String endDate = doc.getString("endDate");
-                            String eventContent = doc.getString("content");
+                            int image = R.drawable.image;
 
-                            Log.d("LSJ", "Event Title: " + eventTitle);
+                            EventModel event = new EventModel(doc.getId(), eventTitle, "동아리 이름", startDate, image);
+                            myClubEvents.add(event);
+
+                            Log.d("LSJ", "Event loaded: " + eventTitle);
                         }
-                }else Log.d("LSJ", "No events found");
+
+                        myClubAdapter.notifyDataSetChanged();
+
+                    } else Log.d("LSJ", "No events found");
                 })
                 .addOnFailureListener(e -> Log.e("LSJ", "Failed to load events.", e));
+
+    }
+
+    class EventModel {
+        private final String docID;
+        private final String title;
+        private final String clubName;
+
+        private final String  date;
+
+        private final int image;
+
+        public EventModel(String docID, String title, String clubName, String date, int image) {
+            this.docID = docID;
+            this.title = title;
+            this.clubName = clubName;
+            this.image = image;
+            this.date = date;
+        }
+
+        public String getDocID() { return docID; }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public String getClubName() {
+            return clubName;
+        }
+
+        public int getImage() {
+            return image;
+        }
+
+        public String getDate() {
+            return date;
+        }
+
+        @Override
+        public String toString() {
+            return "CardModel{" + "title='" + title + '\'' + ", clubName='" + clubName + '\'' + ", date=" + date + '\'' + ", image=" + image + '}';
+        }
+    }
+
+    class MyClubAdapter extends RecyclerView.Adapter<MyClubAdapter.MyClubViewHolder> {
+
+        private final String clubId;
+        private final List<EventModel> eventList;
+
+        public MyClubAdapter(List<EventModel> eventList, String clubId) {
+            this.clubId = clubId;
+            this.eventList = eventList;
+        }
+
+        @NonNull
+        @Override
+        public MyClubViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+           View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.event_cardview, parent, false);
+           return new MyClubViewHolder(view, clubId);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull MyClubViewHolder holder, int position) {
+            EventModel event = eventList.get(position);
+            holder.bind(event);
+        }
+
+        @Override
+        public int getItemCount() { return eventList.size(); }
+
+        static class MyClubViewHolder extends RecyclerView.ViewHolder {
+            private final String clubId;
+            private final TextView eventTitle;
+            private final TextView clubName;
+            private final TextView startDate;
+            private final ImageView imageArea;
+
+
+            public MyClubViewHolder(@NonNull View itemView, String clubId) {
+                super(itemView);
+                this.clubId = clubId;
+
+                eventTitle = itemView.findViewById(R.id.titleArea);
+                startDate = itemView.findViewById(R.id.dateArea);
+                clubName = itemView.findViewById(R.id.amountArea);
+                imageArea = itemView.findViewById(R.id.imageArea);
+            }
+
+            public void bind(EventModel event){
+                eventTitle.setText(event.getTitle());
+                clubName.setText(event.getClubName());
+                imageArea.setImageResource(event.getImage());
+                startDate.setText(event.getDate());
+
+                Button viewButton = itemView.findViewById(R.id.viewButton);
+                viewButton.setOnClickListener(v -> {
+                    ((FragmentActivity) itemView.getContext())
+                            .getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.full_screen_container, MyClubDetailFragment.newInstance(clubId, event.getDocID()))
+                            .addToBackStack(null)
+                            .commit();
+                });
+            }
+        }
 
     }
 }
