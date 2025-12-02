@@ -28,7 +28,7 @@ public class EventCollection extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
 
-        addAllEvents();
+        // addAllEvents();
     }
 
     private void addAllEvents() {
