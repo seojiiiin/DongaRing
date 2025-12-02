@@ -16,7 +16,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.login.databinding.FragmentAddEventBinding;
 import com.example.login.databinding.FragmentAdminMyPageBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -141,7 +140,7 @@ public class AdminMyPageFragment extends Fragment {
                             @Override
                             public void onClick(View v) {
                                 Log.d("JHM", "신청현황 버튼 클릭");
-                                startActivity(new Intent(getActivity(), MemberManageActivity.class));
+                                startActivity(new Intent(getActivity(), ApplyManageActivity.class));
                             }
                         });
                         ImageView clubLogo = clubView.findViewById(R.id.club_logo_area);

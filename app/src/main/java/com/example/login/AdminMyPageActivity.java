@@ -47,7 +47,7 @@ public class AdminMyPageActivity extends AppCompatActivity {
                     return true;
                 }
                 if(itemId == R.id.member_management){
-                    startActivity(new Intent(AdminMyPageActivity.this, MemberManageActivity.class));
+                    transferTo(MemberManageFragment.newInstance("", ""));
                     return true;
                 }
                 if(itemId == R.id.club_management){

@@ -14,7 +14,7 @@
             android:name=".EventCollection"
             android:exported="true" />
         <activity
-            android:name=".MemberManageActivity"
+            android:name=".ApplyManageActivity"
             android:exported="false" />
         <activity
             android:name=".AdminMyPageActivity"

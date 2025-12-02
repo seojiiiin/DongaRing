@@ -27,7 +27,7 @@
             android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="빛누리"
+            android:text="동아리 이름"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="#000000"
@@ -45,7 +45,10 @@
             app:layout_constraintTop_toBottomOf="@id/tv_title" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#E0E0E0" />
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -66,7 +69,7 @@
                 android:paddingEnd="16dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="20dp"
-                tools:listitem="@layout/item_applicant_profile" />
+                tools:listitem="@layout/item_applicant_profile_vertical" />
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"

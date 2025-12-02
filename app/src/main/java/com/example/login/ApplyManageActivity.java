@@ -21,7 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MemberManageActivity extends AppCompatActivity{
+public class ApplyManageActivity extends AppCompatActivity{
 
     private List<Applicant> applicantList;
     private ApplicantAdapter adapter;
@@ -30,7 +30,7 @@ public class MemberManageActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_member_manage);
+        setContentView(R.layout.activity_apply_manage);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -127,7 +127,7 @@ public class MemberManageActivity extends AppCompatActivity{
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             // item_applicant_profile.xml 레이아웃을 inflate
             View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_applicant_profile, parent, false);
+                    .inflate(R.layout.item_applicant_profile_vertical, parent, false);
             return new ViewHolder(view);
         }
 
