@@ -28,6 +28,7 @@ import androidx.fragment.app.Fragment;
 
 
 import com.example.login.databinding.FragmentAddEventBinding;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Calendar;
@@ -127,7 +128,9 @@ public class AddEventFragment extends Fragment {
     }
 
     /// firestore의 clubs 컬렉션에서 해당 club name의 하위 컬렉션인 events에 문서 저장하도록 코드변경 해야함!!!
+    /// 일단 햇어요
     private void saveEvent() {
+
         String title = binding.titleEditText.getText().toString();
         String start = binding.startDateEditText.getText().toString();
         String end = binding.endDateEditText.getText().toString();
@@ -136,23 +139,27 @@ public class AddEventFragment extends Fragment {
 
         String selectedUriString = (selectedFile != null) ? selectedFile.toString() : null;
 
-        Map<String, Object> map = new HashMap<>();
-        map.put("event name", title);
-        map.put("start date", start);
-        map.put("end date", end);
-        map.put("location", location);
-        map.put("content", content);
-        map.put("imageUri", selectedUriString);
-        map.put("disclosure scope", selectedScope);
-        if (recruitNum != -1) map.put("recruit num", recruitNum);
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+        String clubId = getArguments().getString("clubId");
+        DocumentReference parentDocRef = db.collection("clubs").document(clubId);
+
+        Map<String, Object> event = new HashMap<>();
+        event.put("title", title);
+        event.put("startDate", start);
+        event.put("endDate", end);
+        event.put("location", location);
+        event.put("content", content);
+        event.put("imageUri", selectedUriString);
+        event.put("visibility", selectedScope);
+        if (recruitNum != -1) event.put("recruitNum", recruitNum);
+
 
         if (docID != null){
             //수정
-            db.collection("events")
+            parentDocRef.collection("events")
                     .document(docID)
-                    .update(map)
+                    .update(event)
                     .addOnSuccessListener(a -> {
                         Log.d("LSJ", "update completed");
 
@@ -164,8 +171,8 @@ public class AddEventFragment extends Fragment {
                     });
         } else {
             //신규 등록
-            db.collection("events")
-                    .add(map)
+            parentDocRef.collection("events")
+                    .add(event)
                     .addOnSuccessListener(a -> {
                         Log.d("LSJ", "registration completed");
 
