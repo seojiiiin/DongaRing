@@ -11,9 +11,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Login">
         <activity
-            android:name=".EventCollection"
-            android:exported="true" />
-        <activity
             android:name=".ApplyManageActivity"
             android:exported="false" />
         <activity
