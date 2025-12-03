@@ -16,6 +16,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 public class MyClubActivity extends AppCompatActivity {
     ActivityMyClubBinding binding;
     FirebaseFirestore db;
+    String clubID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,14 +34,30 @@ public class MyClubActivity extends AppCompatActivity {
             return insets;
         });
 
+        clubID =  getIntent().getStringExtra("clubID");
+
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         if(savedInstanceState==null){
-            bottomNavigationView.setSelectedItemId(R.id.nav_mypage);
-            transferTo(MyPageFragment.newInstance("", ""));
+            bottomNavigationView.setSelectedItemId(R.id.nav_myEvent);
+            transferTo(MyClubFragment.newInstance(clubID, ""));
         }
 
-        String clubName = getIntent().getStringExtra("clubName");
-
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_calendar) {
+                transferTo(CalendarFragment.newInstance());
+                return true;
+            }
+            if (itemId == R.id.nav_joinRecord) {
+                transferTo(JoinRecordFragment.newInstance(clubID, ""));
+                return true;
+            }
+            if (itemId == R.id.nav_myEvent) {
+                transferTo(MyClubFragment.newInstance(clubID, ""));
+                return true;
+            }
+            return false;
+        });
     }
 
     private void transferTo(Fragment fragment){

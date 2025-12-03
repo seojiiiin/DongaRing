@@ -2,11 +2,16 @@ package com.example.login;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.example.login.databinding.FragmentMyClubDetailBinding;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -21,8 +26,11 @@ public class MyClubDetailFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private String clubID;
+    private String eventID;
+    private FragmentMyClubDetailBinding binding;
+    private FirebaseFirestore db;
+
 
     public MyClubDetailFragment() {
         // Required empty public constructor
@@ -50,15 +58,50 @@ public class MyClubDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            clubID = getArguments().getString(ARG_PARAM1);
+            eventID = getArguments().getString(ARG_PARAM2);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_my_club_detail, container, false);
+        binding = FragmentMyClubDetailBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        db = FirebaseFirestore.getInstance();
+
+        binding.back.setOnClickListener(v -> {
+            requireActivity()
+                    .getSupportFragmentManager()
+                    .popBackStack();
+        });
+
+        db.collection("clubs")
+                .document(clubID)
+                .collection("events")
+                .document(eventID)
+                .get()
+                .addOnSuccessListener(doc -> {
+                    if (doc.exists()) {
+                        String title = doc.getString("title");
+                        String startDate = doc.getString("startDate");
+                        String endDate = doc.getString("endDate");
+                        String location = doc.getString("location");
+                        String content = doc.getString("content");
+
+                        if(doc.contains("recruit num")) binding.joinButton.setVisibility(View.VISIBLE);
+
+                        binding.eventName.setText(title);
+                        binding.startDate.setText(startDate);
+                        binding.endDate.setText(endDate);
+                        binding.location.setText(location);
+                        binding.content.setText(content);
+                    }
+                });
     }
 }
