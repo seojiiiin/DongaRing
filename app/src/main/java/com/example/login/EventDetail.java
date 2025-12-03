@@ -33,7 +33,13 @@ public class EventDetail extends Fragment {
     private String location;
     private String content;
     private String imageUri;
-
+    public static EventDetail newInstance(String docId) {
+        EventDetail fragment = new EventDetail();
+        Bundle args = new Bundle();
+        args.putString("documentId", docId);
+        fragment.setArguments(args);
+        return fragment;
+    }
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

@@ -5,6 +5,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,8 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.login.databinding.FragmentCalendarBinding;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.DayViewDecorator;
@@ -34,6 +37,8 @@ import java.util.Map;
 public class CalendarFragment extends Fragment {
 
     private FragmentCalendarBinding binding;
+    private FirebaseAuth mAuth;
+    private FirebaseUser user;
     private FirebaseFirestore db;
     
     // 이벤트를 Map으로 저장 (Key : CalendarDay, Value : 이벤트 목록 List)
@@ -59,7 +64,6 @@ public class CalendarFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        db = FirebaseFirestore.getInstance();
         MaterialCalendarView calendarView = binding.calendar;
 
         // 오늘날짜를 targetDate로 설정
@@ -89,15 +93,18 @@ public class CalendarFragment extends Fragment {
         });
     }
 
-    /**
-     * 이 함수에 firebase기능 추가해야함
-     */
+    //TODO: firebase에서 이벤트 가져오기
     private void loadEvents() {
         eventMap.clear();
         eventDates.clear();
 
-        //임시로 addEvent
-        //파라미터 : year, month_start, day_start, month_end, day_end, time, title
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+        user = mAuth.getCurrentUser();
+        if (user == null) {
+            Log.d("JHM", "user is null");
+            return;
+        }
         addEvent(2025, 10, 8, 10, 8, "18:00", "빛누리 면접");
         addEvent(2025, 10, 12, 10, 12, "18:00", "면접 결과 발표");
         addEvent(2025, 10, 12, 10, 12, "20:00", "면접 결과 발표2");

@@ -11,6 +11,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Login">
         <activity
+            android:name=".EventCollection"
+            android:exported="true" />
+        <activity
+            android:name=".ApplyManageActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdminMyPageActivity"
+            android:exported="false" />
+        <activity
             android:name=".EventListActivity"
             android:exported="true" />
         <activity
@@ -25,9 +34,6 @@
         <activity
             android:name=".SignUpActivity"
             android:exported="false" />
-        <activity
-            android:name=".MyClubActivity"
-            android:exported="true" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
