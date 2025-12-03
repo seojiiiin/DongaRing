@@ -14,6 +14,12 @@
             android:name=".EventCollection"
             android:exported="true" />
         <activity
+            android:name=".ApplyManageActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdminMyPageActivity"
+            android:exported="false" />
+        <activity
             android:name=".EventListActivity"
             android:exported="true" />
         <activity

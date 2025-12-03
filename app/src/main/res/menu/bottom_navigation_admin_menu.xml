@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_calendar"
+        android:icon="@drawable/ic_calendar"
+        android:title="캘린더" />
+    <item
+        android:id="@+id/member_management"
+        android:icon="@drawable/ic_club_list"
+        android:title="부원 관리" />
+    <item
+        android:id="@+id/club_management"
+        android:icon="@drawable/ic_favorites"
+        android:title="동아리 관리" />
+    <item
+        android:id="@+id/nav_mypage"
+        android:icon="@drawable/ic_mypage"
+        android:title="마이 페이지" />
+</menu>
