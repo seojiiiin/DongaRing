@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.login.databinding.FragmentAdminMyPageBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -41,6 +42,7 @@ public class AdminMyPageFragment extends Fragment {
     private FirebaseUser user;
     private FirebaseFirestore db;
     private FragmentAdminMyPageBinding binding;
+    private String clubId;
     List<CardModel> eventList = new ArrayList<>();
     EventAdapter eventAdapter;
 
@@ -86,6 +88,18 @@ public class AdminMyPageFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        getParentFragmentManager().setFragmentResultListener(
+                "event_added", this, (key, bundle) -> {
+                    boolean success = bundle.getBoolean("success", false);
+                    if (success) {
+                        Log.d("LSJ", "이벤트 목록을 새로고침");
+                        eventList.clear();  // 기존 리스트 초기화
+                        searchEvents(binding.userName.getText().toString()); // Firestore에서 다시 불러오기
+                    }
+                }
+        );
+
         // Firebase 초기화
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -103,6 +117,9 @@ public class AdminMyPageFragment extends Fragment {
                 .get()
                 .addOnSuccessListener(query -> {
                     if (!query.isEmpty()) {
+                        String clubId = query.getDocuments().get(0).getString("clubAdminOf");
+                        this.clubId = clubId;
+
                         String userName = query.getDocuments().get(0).getString("name");
                         binding.userName.setText(userName);
                         searchEvents(userName);
@@ -118,6 +135,20 @@ public class AdminMyPageFragment extends Fragment {
         eventAdapter = new EventAdapter(eventList);
         eventRecyclerView.setAdapter(eventAdapter);
 
+        /// 제출 누르면 강종됨;;
+        binding.addEvent.setOnClickListener(v -> {
+            AddEventFragment fragment = new AddEventFragment();
+
+            Bundle bundle = new Bundle();
+            bundle.putString("clubId", clubId);
+            fragment.setArguments(bundle);
+
+            getParentFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.full_screen_container, fragment)
+                    .addToBackStack(null)
+                    .commit();
+        });
     }
     //가입신청자 관리 뷰 추가
     private void clubManage(String userName) {
@@ -173,15 +204,16 @@ public class AdminMyPageFragment extends Fragment {
                         String clubId = clubDoc.getId();
                         String clubName = clubDoc.getString(name);
                         Log.d("JHM", "찾은 동아리ID : " + clubId);
-                        db.collection("clubs").document(clubId).collection("evnets") // 오타 'evnets' 그대로 사용
+                        db.collection("clubs").document(clubId).collection("events")
                                 .get()
                                 .addOnSuccessListener(eventQuery -> {
-                                    // evnets 안에 있는 모든 문서들을 하나씩 꺼내어 이벤트 리스트에 추가
+                                    // events 안에 있는 모든 문서들을 하나씩 꺼내어 이벤트 리스트에 추가
                                     for (QueryDocumentSnapshot eventDoc : eventQuery) {
                                         String title = eventDoc.getString("title");
                                         String startDate = eventDoc.getString("startDate");
                                         int[] date = parseDate(startDate);
-                                        eventList.add(new CardModel(title, clubName, R.drawable.logo, date[0], date[1], date[2]));
+                                        String imageUri = eventDoc.getString("imageUri");
+                                        eventList.add(new CardModel(title, clubName, imageUri, date[0], date[1], date[2]));
                                         Log.d("JHM", "행사명: " + title + ", 시작일: " + startDate);
                                     }
                                     if(eventAdapter != null) eventAdapter.notifyDataSetChanged();
@@ -196,7 +228,8 @@ public class AdminMyPageFragment extends Fragment {
                 });
     }
     private int[] parseDate(String dateString) {
-        String[] parts = dateString.split("-");
+        String[] dateTime = dateString.split(" ");
+        String[] parts = dateTime[0].split("-");
         int year = Integer.parseInt(parts[0]);
         int month = Integer.parseInt(parts[1]);
         int day = Integer.parseInt(parts[2]);
@@ -205,13 +238,13 @@ public class AdminMyPageFragment extends Fragment {
     class CardModel {
         private final String title;
         private final String clubName;
-        private final int image;
+        private final String  image;
 
         private final int year;
         private final int month;
         private final int date;
 
-        public CardModel(String title, String clubName, int image, int year, int month, int date) {
+        public CardModel(String title, String clubName, String image, int year, int month, int date) {
             this.title = title;
             this.clubName = clubName;
             this.image = image;
@@ -225,7 +258,7 @@ public class AdminMyPageFragment extends Fragment {
         public String getClubName() {
             return clubName;
         }
-        public int getImage() {
+        public String getImage() {
             return image;
         }
 
@@ -311,7 +344,17 @@ public class AdminMyPageFragment extends Fragment {
                 amountArea = itemView.findViewById(R.id.amountArea);
             }
             public void bind(CardModel event) {
-                imageArea.setImageResource(event.getImage());
+                // Glide로 Firestore의 imageUri 로딩
+                if (event.getImage() != null) {
+                    Glide.with(imageArea.getContext())
+                            .load(event.getImage())
+                            .placeholder(R.drawable.logo)   // 로딩 중 표시할 기본 이미지
+                            .error(R.drawable.logo)         // 실패 시 표시할 이미지
+                            .into(imageArea);
+                } else {
+                    imageArea.setImageResource(R.drawable.logo);
+                }
+
                 titleArea.setText(event.getTitle());
                 amountArea.setText(event.getClubName());
                 String month = switch(event.getMonth()){
@@ -329,7 +372,7 @@ public class AdminMyPageFragment extends Fragment {
                     case 12 -> "DEC";
                     default -> "NONE";
                 };
-                String dateText = month + " " + event.getDate();
+                String dateText = event.getYear() + " " + month + " " + event.getDate();
                 dateArea.setText(dateText);
             }
         }
