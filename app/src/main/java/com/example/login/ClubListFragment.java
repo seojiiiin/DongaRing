@@ -19,6 +19,7 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.ImageButton;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -104,10 +105,10 @@ public class ClubListFragment extends Fragment {
 
         clubList = new ArrayList<>();
         // TODO : UserDB에서 가입한 동아리 정보 가져오는 코드 필요
-        clubList.add(new ClubModel("SRC", "숭실대학교 중앙 와인동아리", R.drawable.logo, false, "교양분과"));
-        clubList.add(new ClubModel("동아리2", "숭실대학교 중앙 동아리2", R.drawable.logo, false, "체육분과"));
-        clubList.add(new ClubModel("동아리3", "숭실대학교 중앙 동아리3", R.drawable.logo, true, "학술분과"));
-        clubList.add(new ClubModel("동아리4", "숭실대학교 중앙 동아리4", R.drawable.logo, false, "연행예술분과"));
+        clubList.add(new ClubModel("SRC", "숭실대학교 중앙 와인동아리", "R.drawable.logo", false, "교양분과"));
+        clubList.add(new ClubModel("동아리2", "숭실대학교 중앙 동아리2", "R.drawable.logo", false, "체육분과"));
+        clubList.add(new ClubModel("동아리3", "숭실대학교 중앙 동아리3", "R.drawable.logo", true, "학술분과"));
+        clubList.add(new ClubModel("동아리4", "숭실대학교 중앙 동아리4", "R.drawable.logo", false, "연행예술분과"));
         adapter = new ClubAdapter(clubList);
         recyclerView.setAdapter(adapter);
 
@@ -160,13 +161,13 @@ public class ClubListFragment extends Fragment {
     class ClubModel {
         private final String clubName;
         private final String description;
-        private final int image;
+        private final String image;
 
         //관심동아리 체크여부
         private boolean isFavorites=false;
         private String type;
 
-        public ClubModel(String clubName, String description, int image, boolean isFavorites, String type){
+        public ClubModel(String clubName, String description, String image, boolean isFavorites, String type){
             this.clubName = clubName;
             this.description = description;
             this.image = image;
@@ -179,7 +180,7 @@ public class ClubListFragment extends Fragment {
 
         public String getDescription() { return description; }
 
-        public int getImage() { return image; }
+        public String getImage() { return image; }
         public boolean isFavorites() { return isFavorites; }
         public String getType() { return type; }
 
@@ -248,7 +249,18 @@ public class ClubListFragment extends Fragment {
             if (tvDesc != null) tvDesc.setText(item.getDescription());
 
             ImageView ivImage = holder.itemView.findViewById(R.id.club_image);
-            if (ivImage != null) ivImage.setImageResource(item.getImage());
+            if (ivImage != null) {
+                // imageUri가 null인지 체크 후 Glide로 로딩
+                if (item.getImage() != null && !item.getImage().isEmpty()) {
+                    Glide.with(ivImage.getContext())
+                            .load(item.getImage())     // Firestore 또는 Storage 경로
+                            .placeholder(R.drawable.logo) // 로딩 중 이미지
+                            .error(R.drawable.logo)       // 실패 시 기본 이미지
+                            .into(ivImage);
+                } else {
+                    ivImage.setImageResource(R.drawable.logo);
+                }
+            }
 
             if (item.isFavorites()) {
                 holder.btnFavorite.setImageResource(R.drawable.ic_heart_filled);

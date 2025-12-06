@@ -124,7 +124,9 @@ public class AddEventFragment extends Fragment {
         });
 
         // 제출 버튼
-        binding.submitButton.setOnClickListener(v -> saveEvent());
+        binding.submitButton.setOnClickListener(v -> {
+            saveEvent();
+        });
     }
 
     /// firestore의 clubs 컬렉션에서 해당 club name의 하위 컬렉션인 events에 문서 저장하도록 코드변경 해야함!!!
