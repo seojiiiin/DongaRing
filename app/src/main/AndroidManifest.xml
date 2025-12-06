@@ -11,6 +11,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Login">
         <activity
+            android:name=".ClubCollection"
+            android:exported="true" />
+        <activity
             android:name=".ApplyManageActivity"
             android:exported="false" />
         <activity
