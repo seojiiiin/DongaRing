@@ -133,15 +133,6 @@ public class ClubListFragment extends Fragment {
 
         // 초기 상태 설정 (전체 버튼을 선택된 상태로)
         updateButtonStyles(view.findViewById(R.id.btn_whole));
-
-        //TODO : 즐겨찾기 버튼 누르면 관심동아리 목록에 추가하는 코드 필요
-        ImageButton fav_btn = view.findViewById(R.id.btn_favorite);
-        fav_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
     }
     private void setupCategoryButton(Button btn, String categoryType) {
         if (btn != null) {
