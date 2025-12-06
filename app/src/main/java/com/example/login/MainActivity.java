@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 // 관리자 확인 완료 → 관리자 화면 이동
                                 Log.d("LSJ", "Admin login success");
-                                startActivity(new Intent(MainActivity.this,AdminMyPageActivity.class));
+                                startActivity(new Intent(MainActivity.this, AdminMyPageActivity.class));
                             })
                             .addOnFailureListener(e -> {
                                 Log.w("LSJ", "Error checking admin status", e);
