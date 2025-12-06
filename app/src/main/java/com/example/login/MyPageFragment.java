@@ -1,8 +1,6 @@
 package com.example.login;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -24,7 +22,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -116,6 +113,8 @@ public class MyPageFragment extends Fragment {
 
         List<CardModel> eventList = new ArrayList<>();
         eventList = new ArrayList<>();
+
+        //이벤트
         eventList.add(new CardModel("이벤트 이름1", "동아리 이름1", R.drawable.logo, 2024, 10, 22));
         eventList.add(new CardModel("이벤트 이름2", "동아리 이름2", R.drawable.logo, 2024, 11, 22));
 
@@ -124,43 +123,105 @@ public class MyPageFragment extends Fragment {
         EventAdapter eventAdapter = new EventAdapter(eventList);
         eventRecyclerView.setAdapter(eventAdapter);
 
-        // 신청한 동아리 목록 (기존 clubList)
-        List<ClubModel> clubList = new ArrayList<>();
-        clubList.add(new ClubModel("SRC", "숭실대학교 중앙 와인동아리", R.drawable.logo));
-        clubList.add(new ClubModel("두메", "숭실대학교 중앙 풍물패", R.drawable.logo));
-        clubList.add(new ClubModel("SSBC", "숭실대학교 중앙 방송국", R.drawable.logo));
-
+        //신청한 동아리 DB에서 불러오기 (users -> appliedClubs)
         LinearLayout clubListContainer = binding.clubListContainer;
-        if(clubList.isEmpty()){
-            // RecyclerView가 아닌 컨테이너를 숨김
-            clubListContainer.setVisibility(View.GONE);
-            binding.emptyClubMessage1.setVisibility(View.VISIBLE);
-        }
-        else {
-            // clubList의 각 아이템에 대해 뷰를 생성하고 LinearLayout에 추가
-            LayoutInflater inflater = getLayoutInflater();
-            for (ClubModel club : clubList) {
-                // club_cardview.xml을 인플레이트
-                View clubView = inflater.inflate(R.layout.club_cardview, clubListContainer, false);
+        loadAppliedClubs(clubListContainer);
 
-                // 뷰의 각 컴포넌트
-                ImageView clubLogo = clubView.findViewById(R.id.club_logo_area);
-                TextView clubName = clubView.findViewById(R.id.club_name_text);
-                TextView clubDescription = clubView.findViewById(R.id.club_desc_text);
 
-                // 데이터를 뷰에 설정
-                clubLogo.setImageResource(club.getImage());
-                clubName.setText(club.getClubName());
-                clubDescription.setText(club.getDescription());
+        //clubList.add(new ClubModel("SRC", "숭실대학교 중앙 와인동아리", R.drawable.logo));
+        //clubList.add(new ClubModel("두메", "숭실대학교 중앙 풍물패", R.drawable.logo));
+        //clubList.add(new ClubModel("SSBC", "숭실대학교 중앙 방송국", R.drawable.logo));
 
-                // 생성된 뷰를 컨테이너에 추가
-                clubListContainer.addView(clubView);
-            }
-        }
+        //if(clubList.isEmpty()){
+        //    // RecyclerView가 아닌 컨테이너를 숨김
+        //    clubListContainer.setVisibility(View.GONE);
+        //    binding.emptyClubMessage1.setVisibility(View.VISIBLE);
+        //}
+        //else {
+        //    // clubList의 각 아이템에 대해 뷰를 생성하고 LinearLayout에 추가
+        //    LayoutInflater inflater = getLayoutInflater();
+        //    for (ClubModel club : clubList) {
+        //        // club_cardview.xml을 인플레이트
+        //        View clubView = inflater.inflate(R.layout.club_cardview, clubListContainer, false);
+//
+        //        // 뷰의 각 컴포넌트
+        //        ImageView clubLogo = clubView.findViewById(R.id.club_logo_area);
+        //        TextView clubName = clubView.findViewById(R.id.club_name_text);
+        //        TextView clubDescription = clubView.findViewById(R.id.club_desc_text);
+//
+        //        // 데이터를 뷰에 설정
+        //        clubLogo.setImageResource(club.getImage());
+        //        clubName.setText(club.getClubName());
+        //        clubDescription.setText(club.getDescription());
+//
+        //        // 생성된 뷰를 컨테이너에 추가
+        //        clubListContainer.addView(clubView);
+        //    }
+        //}
 
-        // 가입한 동아리 목록
+        // 가입한 동아리 목록 불러오기
         LinearLayout registeredClubListContainer = binding.registeredClubListContainer;
         loadRegisteredClubs(registeredClubListContainer);
+    }
+
+    private void loadAppliedClubs(LinearLayout clubListContainer) {
+        clubListContainer.removeAllViews();
+
+        // Users 컬렉션에서 현재 유저 정보 가져오기
+        db.collection("users")
+                .whereEqualTo("uid", user.getUid())
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    if (!querySnapshot.isEmpty()) {
+                        DocumentSnapshot userDoc = querySnapshot.getDocuments().get(0);
+
+                        // 'appliedClubs' 필드 가져오기 (Club UID들의 리스트)
+                        List<String> appliedClubUids = (List<String>) userDoc.get("appliedClubs");
+
+                        if (appliedClubUids == null || appliedClubUids.isEmpty()) {
+                            // 신청한 동아리가 없을 경우 UI 처리
+                            clubListContainer.setVisibility(View.GONE);
+                            binding.emptyClubMessage1.setVisibility(View.VISIBLE);
+                        } else {
+                            // 신청한 동아리가 있을 경우 UI 처리
+                            clubListContainer.setVisibility(View.VISIBLE);
+                            binding.emptyClubMessage1.setVisibility(View.GONE);
+
+                            LayoutInflater inflater = getLayoutInflater();
+
+                            //리스트에 있는 UID로 Clubs 컬렉션 문서 조회
+                            for (String clubUid : appliedClubUids) {
+
+                                //문서 ID(UID)로 바로 접근하여 데이터가져오기
+                                db.collection("clubs").document(clubUid).get()
+                                        .addOnSuccessListener(clubDoc -> {
+                                            if (clubDoc.exists()) {
+                                                // 동아리 정보 추출 (이름, 활동내용)
+                                                String name = clubDoc.getString("name");
+                                                String description = clubDoc.getString("activities");
+                                                int image = R.drawable.logo; // 기본 이미지
+
+                                                // 뷰 생성 및 데이터 바인딩
+                                                View clubView = inflater.inflate(R.layout.club_cardview, clubListContainer, false);
+
+                                                ImageView clubLogo = clubView.findViewById(R.id.club_logo_area);
+                                                TextView clubName = clubView.findViewById(R.id.club_name_text);
+                                                TextView clubDescription = clubView.findViewById(R.id.club_desc_text);
+
+                                                clubLogo.setImageResource(image);
+                                                if (name != null) clubName.setText(name);
+                                                if (description != null) clubDescription.setText(description);
+
+                                                // 7. 컨테이너에 뷰 추가
+                                                clubListContainer.addView(clubView);
+                                            }
+                                        })
+                                        .addOnFailureListener(e -> Log.d("JHM", "동아리 세부정보 가져오기 실패 : " + clubUid, e));
+                            }
+                        }
+                    }
+                })
+                .addOnFailureListener(e -> Log.w("JHM", "Error getting user info", e));
     }
 
     private void loadRegisteredClubs(LinearLayout container){

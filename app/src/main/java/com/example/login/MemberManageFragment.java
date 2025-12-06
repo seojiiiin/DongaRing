@@ -14,6 +14,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +30,10 @@ import java.util.List;
 public class MemberManageFragment extends Fragment {
     private List<Member> memberList;
     private MemberAdapter adapter;
+    FirebaseFirestore db;
+    FirebaseAuth auth;
+    FirebaseUser user;
+
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -70,23 +79,74 @@ public class MemberManageFragment extends Fragment {
 
         RecyclerView profileList = view.findViewById(R.id.profile_list);
         memberList = new ArrayList<>();
-        //TODO : DB에서 회원정보 가져오기
-        memberList.add(new Member("이름1", "학과1"));
-        memberList.add(new Member("이름2", "학과2"));
-        memberList.add(new Member("이름3", "학과3"));
-        memberList.add(new Member("이름4", "학과4"));
-        memberList.add(new Member("이름5", "학과5"));
-        memberList.add(new Member("이름6", "학과6"));
-        memberList.add(new Member("이름7", "학과7"));
-        memberList.add(new Member("이름8", "학과8"));
-        memberList.add(new Member("이름9", "학과9"));
-        Log.d("JHM", "프로필 로드 완료, 갯수 : " + memberList.size());
         adapter = new MemberAdapter(memberList);
         profileList.setAdapter(adapter);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(profileList.getContext(), new LinearLayoutManager(getContext()).getOrientation());
         profileList.addItemDecoration(dividerItemDecoration);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         profileList.setLayoutManager(layoutManager);
+
+        db = FirebaseFirestore.getInstance();
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
+        
+        //DB에서 부원목록 불러오기
+        if (user != null) {
+            String currentUid = user.getUid();
+            Log.d("JHM", "로그인된 유저 UID: [" + currentUid + "]");
+            
+            db.collection("users_admin")
+                    .whereEqualTo("uid", currentUid)  // uid 필드가 currentUid와 같은 문서 찾기
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            // 결과가 비어있지 않은지 확인
+                            if (!task.getResult().isEmpty()) {
+                                Log.d("JHM", "관리자 문서 발견");
+
+                                DocumentSnapshot document = task.getResult().getDocuments().get(0);
+
+                                String clubId = document.getString("clubAdminOf");
+                                if (clubId != null && !clubId.isEmpty()) {
+                                    Log.d("JHM", "동아리 ID 발견: " + clubId);
+                                    getClubMembers(clubId);
+                                } else {
+                                    Log.e("JHM", "실패: clubAdminOf 필드가 비어있음");
+                                }
+                            } else {
+                                // 쿼리 결과가 0개일 때
+                                Log.e("JHM", "실패: users_admin 컬렉션에서 uid 필드가 [" + currentUid + "]인 문서를 찾지 못함");
+                            }
+                        } else {
+                            Log.e("JHM", "통신 에러 발생", task.getException());
+                        }
+                    });
+        } else {
+            Log.e("JHM", "로그인 정보 없음 (user is null)");
+        }
+    }
+    private void getClubMembers(String clubId) {
+        db.collection("clubs")
+                .document(clubId)
+                .collection("members")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        memberList.clear(); // 기존 데이터 초기화
+                        for (com.google.firebase.firestore.QueryDocumentSnapshot document : task.getResult()) {
+                            String name = document.getString("name");
+                            // DB에는 studentNumber로 저장되어 있지만, Member 클래스는 department를 사용하므로 매핑
+                            String studentNumber = document.getString("studentNumber");
+
+                            // null 처리 후 추가
+                            memberList.add(new Member(name, studentNumber != null ? studentNumber : ""));
+                        }
+                        adapter.notifyDataSetChanged(); // 리사이클러뷰 갱신
+                        Log.d("JHM", "프로필 로드 완료, 갯수 : " + memberList.size());
+                    } else {
+                        Log.w("JHM", "Error getting documents.", task.getException());
+                    }
+                });
     }
     public class Member {
         private String name;

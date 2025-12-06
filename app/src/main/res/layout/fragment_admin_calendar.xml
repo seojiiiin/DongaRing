@@ -49,7 +49,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="여기에 날짜 표시"
-                    android:textSize="14sp"
+                    android:textSize="17sp"
                     android:textColor="@color/black"
                     android:lineSpacingExtra="4dp"/>
                 <TextView
@@ -57,7 +57,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="여기에 이벤트 표시"
-                    android:textSize="16sp"
+                    android:textSize="19sp"
                     android:textStyle="bold"
                     android:textColor="@color/black"
                     android:lineSpacingExtra="4dp"/>
