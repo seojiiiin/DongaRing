@@ -9,9 +9,15 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.login.databinding.FragmentMyClubDetailBinding;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -61,6 +67,78 @@ public class MyClubDetailFragment extends Fragment {
             clubID = getArguments().getString(ARG_PARAM1);
             eventID = getArguments().getString(ARG_PARAM2);
         }
+
+        // 신청하기 버튼 누르면 events의 하위 컬렉션 applicants 생성후 정보 저장
+        // 아직 테스트 해보지 않음!!
+        binding.joinButton.setOnClickListener(v -> {
+            String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+            // 1. 이벤트 문서 읽기
+            db.collection("clubs")
+                    .document(clubID)
+                    .collection("events")
+                    .document(eventID)
+                    .get()
+                    .addOnSuccessListener(eventDoc -> {
+                        if (!eventDoc.exists()) return;
+
+                        Long recruitNum = eventDoc.getLong("recruitNum"); // 제한 인원
+                        boolean hasLimit = recruitNum != null;
+
+                        // 2. 제한 인원 있으면 applicants 수 체크
+                        db.collection("clubs")
+                                .document(clubID)
+                                .collection("events")
+                                .document(eventID)
+                                .collection("applicants")
+                                .get()
+                                .addOnSuccessListener(query -> {
+
+                                    // 현재 인원
+                                    int currentCount = query.size();
+
+                                    if (hasLimit && currentCount >= recruitNum) {
+                                        Toast.makeText(requireContext(),
+                                                "신청 인원이 모두 찼습니다.",
+                                                Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
+
+                                    // 3. 유저 정보 가져오기
+                                    db.collection("users")
+                                            .document(uid)
+                                            .get()
+                                            .addOnSuccessListener(userDoc -> {
+                                                if (!userDoc.exists()) return;
+
+                                                String name = userDoc.getString("name");
+                                                String studentId = userDoc.getString("studentId");
+
+                                                Map<String, Object> applyData = new HashMap<>();
+                                                applyData.put("name", name);
+                                                applyData.put("studentId", studentId);
+                                                applyData.put("uid", uid);
+                                                applyData.put("timestamp", FieldValue.serverTimestamp());
+
+                                                // 4. applicants 하위 컬렉션에 저장
+                                                db.collection("clubs")
+                                                        .document(clubID)
+                                                        .collection("events")
+                                                        .document(eventID)
+                                                        .collection("applicants")
+                                                        .document(uid)
+                                                        .set(applyData)
+                                                        .addOnSuccessListener(unused -> {
+                                                            Toast.makeText(requireContext(),
+                                                                    "신청 완료되었습니다.",
+                                                                    Toast.LENGTH_SHORT).show();
+                                                            binding.joinButton.setEnabled(false);
+                                                        });
+                                            });
+                                });
+                    });
+        });
+
     }
 
     @Override
