@@ -198,7 +198,7 @@ public class FavoritesFragment extends Fragment {
                         for (DocumentSnapshot doc : qs.getDocuments()) {
                             String clubId = doc.getId();
                             String name = doc.getString("name");
-                            String desc = doc.getString("description");
+                            String desc = doc.getString("activities");
 
                             if (name == null) name = "(이름 없음)";
                             if (desc == null) desc = "";
@@ -207,7 +207,7 @@ public class FavoritesFragment extends Fragment {
                         }
                     }
 
-                    adapter.notifyDataSetChanged();
+                    adapter.setList(favoriteList);
                     checkEmptyList();
                 })
                 .addOnFailureListener(e -> {
@@ -226,6 +226,11 @@ public class FavoritesFragment extends Fragment {
         public FavoritesAdapter(List<ClubModel> list) {
             this.originalList = list;
             this.filteredList = new ArrayList<>(list);
+        }
+        public void setList(List<ClubModel> list) {
+            this.originalList = list;
+            this.filteredList = new ArrayList<>(list);
+            notifyDataSetChanged();
         }
         public void filter(String query){
             filteredList.clear();
