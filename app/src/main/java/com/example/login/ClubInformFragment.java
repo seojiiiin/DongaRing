@@ -72,16 +72,6 @@ public class ClubInformFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        binding.applyBtn.setOnClickListener(v -> {
-
-        });
-
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
         View chatRow = view.findViewById(R.id.chatInquiryRow);
 
         chatRow.setOnClickListener(v -> {
@@ -93,9 +83,9 @@ public class ClubInformFragment extends Fragment {
             b.putString("clubId", clubId);
             f.setArguments(b);
 
-            requireActivity().getSupportFragmentManager()
+            getParentFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.main, f) // 여기 컨테이너 id를 프로젝트에 맞게
+                    .replace(R.id.full_screen_container, f) // 여기 컨테이너 id를 프로젝트에 맞게
                     .addToBackStack(null)
                     .commit();
         });
