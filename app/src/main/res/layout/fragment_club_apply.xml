@@ -65,7 +65,7 @@
                 android:layout_marginBottom="4dp" />
 
             <EditText
-                android:id="@+id/major"
+                android:id="@+id/studentNumber"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="학번"
@@ -82,7 +82,7 @@
                 android:layout_marginBottom="4dp" />
 
             <EditText
-                android:id="@+id/major"
+                android:id="@+id/phoneNumber"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="010-1234-5678"
@@ -99,7 +99,7 @@
                 android:layout_marginBottom="4dp" />
 
             <EditText
-                android:id="@+id/content"
+                android:id="@+id/motivation"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
                 android:background="@android:drawable/edit_text"
@@ -110,7 +110,7 @@
 
             <!-- 제출 버튼 -->
             <Button
-                android:id="@+id/submitButton"
+                android:id="@+id/submitBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="제출"
