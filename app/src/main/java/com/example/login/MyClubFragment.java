@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -69,10 +70,6 @@ public class MyClubFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            clubID = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -86,6 +83,14 @@ public class MyClubFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        if (getArguments() != null) {
+            clubID = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
+        }
+        if (clubID == null) {
+            Log.d("JHM", "clubID is null. Cannot load data.");
+            return;
+        }
         db = FirebaseFirestore.getInstance();
 
         binding.home.setOnClickListener(v -> {
@@ -106,7 +111,7 @@ public class MyClubFragment extends Fragment {
                 });
 
         List<EventModel> myClubEvents = new ArrayList<>();
-        MyClubAdapter myClubAdapter = new MyClubAdapter(myClubEvents, clubID);
+        MyClubAdapter myClubAdapter = new MyClubAdapter(myClubEvents, clubID, requireActivity().getSupportFragmentManager());
         binding.rvEvents.setAdapter(myClubAdapter);
         binding.rvEvents.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
 
@@ -180,17 +185,19 @@ public class MyClubFragment extends Fragment {
 
         private final String clubId;
         private final List<EventModel> eventList;
+        private final FragmentManager fragmentManager;
 
-        public MyClubAdapter(List<EventModel> eventList, String clubId) {
+        public MyClubAdapter(List<EventModel> eventList, String clubId, FragmentManager fragmentManager) {
             this.clubId = clubId;
             this.eventList = eventList;
+            this.fragmentManager = fragmentManager;
         }
 
         @NonNull
         @Override
         public MyClubViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.event_cardview, parent, false);
-           return new MyClubViewHolder(view, clubId);
+           return new MyClubViewHolder(view, clubId, fragmentManager);
         }
 
         @Override
@@ -208,11 +215,14 @@ public class MyClubFragment extends Fragment {
             private final TextView clubName;
             private final TextView startDate;
             private final ImageView imageArea;
+            private final FragmentManager fragmentManager;
 
 
-            public MyClubViewHolder(@NonNull View itemView, String clubId) {
+
+            public MyClubViewHolder(@NonNull View itemView, String clubId, FragmentManager fragmentManager) {
                 super(itemView);
                 this.clubId = clubId;
+                this.fragmentManager = fragmentManager;
 
                 eventTitle = itemView.findViewById(R.id.titleArea);
                 startDate = itemView.findViewById(R.id.dateArea);
@@ -228,8 +238,7 @@ public class MyClubFragment extends Fragment {
 
                 Button viewButton = itemView.findViewById(R.id.viewButton);
                 viewButton.setOnClickListener(v -> {
-                    ((FragmentActivity) itemView.getContext())
-                            .getSupportFragmentManager()
+                    fragmentManager
                             .beginTransaction()
                             .replace(R.id.full_screen_container, MyClubDetailFragment.newInstance(clubId, event.getDocID()))
                             .addToBackStack(null)

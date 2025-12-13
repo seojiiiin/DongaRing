@@ -14,6 +14,8 @@
         <activity
             android:name=".ClubCollection"
             android:exported="true" />
+        <activity android:name=".MyClubActivity"
+            android:exported="false"/>
         <activity
             android:name=".ApplyManageActivity"
             android:exported="false" />
