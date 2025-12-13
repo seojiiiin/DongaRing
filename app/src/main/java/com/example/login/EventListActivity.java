@@ -24,6 +24,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.login.databinding.ActivityEventListBinding;
 import com.example.login.databinding.EventCardviewBinding;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.ObjectStreamException;
@@ -79,29 +81,67 @@ public class EventListActivity extends AppCompatActivity {
     /// 해당 club name의 하위 컬렉션인 events에서 문서들 불러오게 코드변경해야함!!
     private void loadEvent() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        FirebaseUser user = auth.getCurrentUser();
 
-        db.collection("events")
+        // 로그인이 안 되어 있다면 리턴
+        if (user == null) {
+            Log.e("LSJ", "User not logged in");
+            return;
+        }
+
+        // 1. users_admin 컬렉션에서 현재 로그인한 유저의 문서 접근
+        db.collection("users_admin").document(user.getUid())
                 .get()
-                .addOnSuccessListener(queryDocSnapshots -> {
-                    events.clear();
+                .addOnSuccessListener(userDoc -> {
+                    if (userDoc.exists()) {
+                        // 관리자로 속해 있는 동아리 ID 가져오기
+                        String clubId = userDoc.getString("clubAdminOf");
 
-                    for (var doc : queryDocSnapshots.getDocuments()){
-                        EventModel model = new EventModel(
-                                doc.getString("club name"),
-                                doc.getString("event name"),
-                                doc.getString("start date"),
-                                doc.getString("end date"),
-                                doc.getString("location"),
-                                doc.getString("content"),
-                                doc.getString("imageUri"),
-                                doc.getId()
-                        );
-                        events.add(model);
+                        if (clubId != null && !clubId.isEmpty()) {
+                            // 2. 해당 동아리(club) 문서 접근 (이름 가져오기 위함 + 하위 컬렉션 접근)
+                            db.collection("clubs").document(clubId)
+                                    .get()
+                                    .addOnSuccessListener(clubDoc -> {
+                                        if (clubDoc.exists()) {
+                                            String clubName = clubDoc.getString("club name");
+
+                                            // 3. 해당 동아리의 하위 컬렉션 'events'에서 이벤트 목록 가져오기
+                                            clubDoc.getReference().collection("events")
+                                                    .get()
+                                                    .addOnSuccessListener(eventSnapshots -> {
+                                                        events.clear(); // 기존 리스트 초기화
+
+                                                        for (var eventDoc : eventSnapshots.getDocuments()) {
+                                                            EventModel model = new EventModel(
+                                                                    // 이벤트 문서 내에 club name이 있으면 쓰고, 없으면 상위 문서의 이름을 사용
+                                                                    eventDoc.getString("club name") != null ? eventDoc.getString("club name") : clubName,
+                                                                    eventDoc.getString("title"),
+                                                                    eventDoc.getString("startDate"),
+                                                                    eventDoc.getString("endDate"),
+                                                                    eventDoc.getString("location"),
+                                                                    eventDoc.getString("content"),
+                                                                    eventDoc.getString("imageUri"),
+                                                                    eventDoc.getId()
+                                                            );
+                                                            events.add(model);
+                                                        }
+                                                        adapter.notifyDataSetChanged();
+                                                    })
+                                                    .addOnFailureListener(e -> Log.e("LSJ", "Failed to load sub events", e));
+                                        }
+                                    })
+                                    .addOnFailureListener(e -> Log.e("LSJ", "Failed to load club info", e));
+                        } else {
+                            Log.d("LSJ", "This user is not an admin of any club.");
+                            events.clear();
+                            adapter.notifyDataSetChanged();
+                        }
+                    } else {
+                        Log.e("LSJ", "User admin info not found.");
                     }
-
-                    adapter.notifyDataSetChanged();
                 })
-                .addOnFailureListener(e -> Log.e("LSJ", "Failed to load events", e));
+                .addOnFailureListener(e -> Log.e("LSJ", "Failed to load user admin doc", e));
     }
 }
 

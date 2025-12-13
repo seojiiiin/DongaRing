@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,6 +19,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.login.databinding.FragmentEventDetailBinding;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -33,10 +36,11 @@ public class EventDetail extends Fragment {
     private String location;
     private String content;
     private String imageUri;
-    public static EventDetail newInstance(String docId) {
+    private String docID;
+    private String currentClubID;
+    public static EventDetail newInstance(String none) {
         EventDetail fragment = new EventDetail();
         Bundle args = new Bundle();
-        args.putString("documentId", docId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -53,35 +57,29 @@ public class EventDetail extends Fragment {
 
         //뒤로가기 버튼
         binding.back.setOnClickListener(v-> getParentFragmentManager().popBackStack());
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            String uid = currentUser.getUid();
 
-        //이벤트 정보 불러오기
-        String docID = getArguments().getString("documentID");
+            db.collection("users").document(uid).get()
+                    .addOnSuccessListener(userDoc -> {
+                        if (userDoc.exists()) {
+                            // 사용자가 관리자로 있는 동아리 ID 가져오기
+                            currentClubID = userDoc.getString("clubAdminOf");
 
-        /// 각 동아리 문서의 events 하위컬렉션으로 접근할 수 있도록 변경 해야함!!!
-        db.collection("events")
-                .document(docID)
-                .get()
-                .addOnSuccessListener(doc -> {
-                    if (doc.exists()){
-                        title = doc.getString("event name");
-                        startDate = doc.getString("start date");
-                        endDate = doc.getString("end date");
-                        location = doc.getString("location");
-                        content = doc.getString("content");
-                        imageUri = doc.getString("imageUri");
-
-                        binding.eventName.setText(title);
-                        binding.startDate.setText(startDate);
-                        binding.endDate.setText(endDate);
-                        binding.location.setText(location);
-                        binding.content.setText(content);
-
-                        if (doc.contains("recruit num")) binding.applyInform.setVisibility(View.VISIBLE);
-                        else binding.applyInform.setVisibility(View.GONE);
-
-                    }
-                })
-                .addOnFailureListener(e -> Log.w("LSJ", "fail to load document", e));
+                            if (currentClubID != null && !currentClubID.isEmpty()) {
+                                //동아리 ID를 알았으니 이제 이벤트 상세 정보 로드
+                                loadEventDetails(currentClubID, docID);
+                            } else {
+                                Log.e("EventDetail", "User is not an admin of any club");
+                                Toast.makeText(getContext(), "동아리 관리자 권한이 없습니다.", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    })
+                    .addOnFailureListener(e -> Log.e("EventDetail", "Failed to fetch user info", e));
+        } else {
+            Toast.makeText(getContext(), "로그인이 필요합니다.", Toast.LENGTH_SHORT).show();
+        }
 
         //수정
         binding.editButton.setOnClickListener(v -> {
@@ -115,6 +113,33 @@ public class EventDetail extends Fragment {
         RecyclerView applyRecyclerView = binding.applyInform;
         applyRecyclerView.setAdapter(applyAdapter);
         applyRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+    }
+
+    private void loadEventDetails(String clubId, String evnetDocId) {
+        db.collection("clubs")
+                .document(docID)
+                .get()
+                .addOnSuccessListener(doc -> {
+                    if (doc.exists()){
+                        title = doc.getString("event name");
+                        startDate = doc.getString("start date");
+                        endDate = doc.getString("end date");
+                        location = doc.getString("location");
+                        content = doc.getString("content");
+                        imageUri = doc.getString("imageUri");
+
+                        binding.eventName.setText(title);
+                        binding.startDate.setText(startDate);
+                        binding.endDate.setText(endDate);
+                        binding.location.setText(location);
+                        binding.content.setText(content);
+
+                        if (doc.contains("recruit num")) binding.applyInform.setVisibility(View.VISIBLE);
+                        else binding.applyInform.setVisibility(View.GONE);
+
+                    }
+                })
+                .addOnFailureListener(e -> Log.w("LSJ", "fail to load document", e));
     }
 
     class ApplyModel{

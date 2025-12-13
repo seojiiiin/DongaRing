@@ -51,7 +51,7 @@ public class AdminMyPageActivity extends AppCompatActivity {
                     return true;
                 }
                 if(itemId == R.id.club_management){
-                    transferTo(EventDetail.newInstance(""));
+                    startActivity(new Intent(AdminMyPageActivity.this, EventListActivity.class));
                     return true;
                 }
                 if(itemId == R.id.nav_mypage){
