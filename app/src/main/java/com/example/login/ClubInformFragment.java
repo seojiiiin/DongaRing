@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.example.login.databinding.FragmentClubInformBinding;
 
@@ -76,4 +77,29 @@ public class ClubInformFragment extends Fragment {
         });
 
     }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        View chatRow = view.findViewById(R.id.chatInquiryRow);
+
+        chatRow.setOnClickListener(v -> {
+            String clubId = getArguments() != null ? getArguments().getString("clubId") : null;
+            if (clubId == null) return;
+
+            ChatRoomFragment f = new ChatRoomFragment();
+            Bundle b = new Bundle();
+            b.putString("clubId", clubId);
+            f.setArguments(b);
+
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.main, f) // 여기 컨테이너 id를 프로젝트에 맞게
+                    .addToBackStack(null)
+                    .commit();
+        });
+    }
+
+
 }
