@@ -349,13 +349,10 @@ public class ClubListFragment extends Fragment {
             holder.btnDetail.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Bundle bundle = new Bundle();
-                    bundle.putString("clubId", item.getClubId());
+                    String clubId = item.getClubId();
 
-                    ClubInformFragment fragment = new ClubInformFragment();
-                    fragment.setArguments(bundle);
                     getParentFragmentManager().beginTransaction()
-                            .replace(R.id.full_screen_container, fragment)
+                            .replace(R.id.full_screen_container, new ClubInformFragment().newInstance(clubId, ""))
                             .addToBackStack(null)
                             .commit();
                 }
