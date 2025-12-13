@@ -68,6 +68,22 @@ public class MyClubDetailFragment extends Fragment {
             eventID = getArguments().getString(ARG_PARAM2);
         }
 
+
+
+
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        binding = FragmentMyClubDetailBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        db = FirebaseFirestore.getInstance();
         binding.joinButton.setOnClickListener(v -> {
             String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
@@ -138,22 +154,6 @@ public class MyClubDetailFragment extends Fragment {
                                 });
                     });
         });
-
-
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        binding = FragmentMyClubDetailBinding.inflate(inflater, container, false);
-        return binding.getRoot();
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        db = FirebaseFirestore.getInstance();
-
         binding.back.setOnClickListener(v -> {
             requireActivity()
                     .getSupportFragmentManager()

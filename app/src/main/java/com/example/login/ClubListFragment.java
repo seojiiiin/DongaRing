@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import android.widget.ImageButton;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -105,12 +107,42 @@ public class ClubListFragment extends Fragment {
 
         clubList = new ArrayList<>();
         // TODO : UserDB에서 가입한 동아리 정보 가져오는 코드 필요
-        clubList.add(new ClubModel("SRC", "숭실대학교 중앙 와인동아리", "R.drawable.logo", false, "교양분과"));
-        clubList.add(new ClubModel("동아리2", "숭실대학교 중앙 동아리2", "R.drawable.logo", false, "체육분과"));
-        clubList.add(new ClubModel("동아리3", "숭실대학교 중앙 동아리3", "R.drawable.logo", true, "학술분과"));
-        clubList.add(new ClubModel("동아리4", "숭실대학교 중앙 동아리4", "R.drawable.logo", false, "연행예술분과"));
-        adapter = new ClubAdapter(clubList);
-        recyclerView.setAdapter(adapter);
+        Log.d("JHM", "동아리 목록 불러오기 시작");
+        db.collection("clubs")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        // 기존 리스트 초기화
+                        clubList.clear();
+                        Log.d("JHM", "문서 가져오기 성공");
+                        int count = task.getResult().size();
+                        Log.d("JHM", "가져온 문서 개수: " + count);
+                        if (count == 0) {
+                            Log.d("JHM", "주의: 컬렉션은 찾았으나 문서가 없습니다. Firestore 컬렉션 이름('clubs')이 정확한지 확인하세요.");
+                        }
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            //필드 값 가져오기
+                            String name = document.getString("name");
+                            String description = document.getString("activities"); // activities 내용을 설명으로 사용
+                            String type = document.getString("type");
+                            Log.d("JHM", "문서 ID: " + document.getId() + ", 데이터: " + document.getData());
+                            // 이미지 URL 필드가 있다면 가져오기 (없으면 null 처리되어 어댑터에서 기본 이미지 사용)
+                            String image = document.getString("imageUri");
+
+                            if (name == null) name = "동아리명 없음";
+                            if (description == null) description = "";
+                            if (type == null) type = "기타";
+
+                            // ClubModel 객체 생성 및 리스트 추가
+                            //isFavorites은 일단 false
+                            clubList.add(new ClubModel(name, description, image, false, type));
+                        }
+                        adapter = new ClubAdapter(clubList);
+                        recyclerView.setAdapter(adapter);
+                    } else {
+                        Log.d("JHM", "Error getting documents: ", task.getException());
+                    }
+                });
 
         categoryButtons.clear(); // 중복 방지
         categoryButtons.add(view.findViewById(R.id.btn_whole));

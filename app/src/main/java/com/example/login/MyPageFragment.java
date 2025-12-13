@@ -128,36 +128,7 @@ public class MyPageFragment extends Fragment {
         loadAppliedClubs(clubListContainer);
 
 
-        //clubList.add(new ClubModel("SRC", "숭실대학교 중앙 와인동아리", R.drawable.logo));
-        //clubList.add(new ClubModel("두메", "숭실대학교 중앙 풍물패", R.drawable.logo));
-        //clubList.add(new ClubModel("SSBC", "숭실대학교 중앙 방송국", R.drawable.logo));
 
-        //if(clubList.isEmpty()){
-        //    // RecyclerView가 아닌 컨테이너를 숨김
-        //    clubListContainer.setVisibility(View.GONE);
-        //    binding.emptyClubMessage1.setVisibility(View.VISIBLE);
-        //}
-        //else {
-        //    // clubList의 각 아이템에 대해 뷰를 생성하고 LinearLayout에 추가
-        //    LayoutInflater inflater = getLayoutInflater();
-        //    for (ClubModel club : clubList) {
-        //        // club_cardview.xml을 인플레이트
-        //        View clubView = inflater.inflate(R.layout.club_cardview, clubListContainer, false);
-//
-        //        // 뷰의 각 컴포넌트
-        //        ImageView clubLogo = clubView.findViewById(R.id.club_logo_area);
-        //        TextView clubName = clubView.findViewById(R.id.club_name_text);
-        //        TextView clubDescription = clubView.findViewById(R.id.club_desc_text);
-//
-        //        // 데이터를 뷰에 설정
-        //        clubLogo.setImageResource(club.getImage());
-        //        clubName.setText(club.getClubName());
-        //        clubDescription.setText(club.getDescription());
-//
-        //        // 생성된 뷰를 컨테이너에 추가
-        //        clubListContainer.addView(clubView);
-        //    }
-        //}
 
         // 가입한 동아리 목록 불러오기
         LinearLayout registeredClubListContainer = binding.registeredClubListContainer;
