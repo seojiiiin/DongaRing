@@ -191,15 +191,15 @@ public class ClubListFragment extends Fragment {
         }
     }
     class ClubModel {
+        private String clubId;
         private final String clubName;
         private final String description;
         private final String image;
-
-        //관심동아리 체크여부
         private boolean isFavorites=false;
         private String type;
 
-        public ClubModel(String clubName, String description, String image, boolean isFavorites, String type){
+        public ClubModel(String clubId, String clubName, String description, String image, boolean isFavorites, String type){
+            this.clubId = clubId;
             this.clubName = clubName;
             this.description = description;
             this.image = image;
@@ -207,20 +207,12 @@ public class ClubListFragment extends Fragment {
             this.type = type;
         }
 
-
+        public String getClubId() { return clubId; }
         public String getClubName() { return clubName; }
-
         public String getDescription() { return description; }
-
         public String getImage() { return image; }
         public boolean isFavorites() { return isFavorites; }
         public String getType() { return type; }
-
-        @Override
-        public String toString(){
-            return "CardModel{" + "clubName='" + clubName + '\'' + ", description='" + description
-                    + '\'' + ", image=" + image + ", isFavorite= " + isFavorites + '}';
-        }
     }
     class ClubAdapter extends RecyclerView.Adapter<ClubAdapter.ViewHolder> {
         private List<ClubModel> originalList;
@@ -307,12 +299,38 @@ public class ClubListFragment extends Fragment {
                     item.isFavorites = newState;
                     holder.btnFavorite.setImageResource(newState ? R.drawable.ic_heart_filled : R.drawable.ic_heart);
                     if(newState){
-                        // TODO : UserDB 관심동아리 목록에 추가하는 코드
-                    }else{
-                        // TODO : UserDB 관심동아리 목록에서 삭제하는 코드
-                    }
+                        // UserDB 관심동아리 목록에 추가
+                        String uid = com.google.firebase.auth.FirebaseAuth.getInstance().getCurrentUser().getUid();
+                        String clubId = item.getClubId(); // ✅ clubs 문서ID
+
+                        java.util.Map<String, Object> update = new java.util.HashMap<>();
+                        update.put("favoriteClubs", com.google.firebase.firestore.FieldValue.arrayUnion(clubId));
+
+                        com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                                .collection("users").document(uid)
+                                .set(update, com.google.firebase.firestore.SetOptions.merge())
+                                .addOnFailureListener(e -> {
+                                    item.isFavorites = false;
+                                    holder.btnFavorite.setImageResource(R.drawable.ic_heart);
+                                });
+
+                    } else {
+                        // UserDB 관심동아리 목록에서 삭제
+                        String uid = com.google.firebase.auth.FirebaseAuth.getInstance().getCurrentUser().getUid();
+                        String clubId = item.getClubId(); // ✅ clubs 문서ID
+
+                        java.util.Map<String, Object> update = new java.util.HashMap<>();
+                        update.put("favoriteClubs", com.google.firebase.firestore.FieldValue.arrayRemove(clubId));
+
+                        com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                                .collection("users").document(uid)
+                                .set(update, com.google.firebase.firestore.SetOptions.merge())
+                                .addOnFailureListener(e -> {
+                                    item.isFavorites = true;
+                                    holder.btnFavorite.setImageResource(R.drawable.ic_heart_filled);
+                                });
                 }
-            });
+            }});
         }
 
         @Override
