@@ -129,8 +129,7 @@ public class AddEventFragment extends Fragment {
         });
     }
 
-    /// firestore의 clubs 컬렉션에서 해당 club name의 하위 컬렉션인 events에 문서 저장하도록 코드변경 해야함!!!
-    /// 일단 햇어요
+    /// firestore의 clubs 컬렉션에서 해당 club name의 하위 컬렉션인 events에 문서 저장하도록
     private void saveEvent() {
 
         String title = binding.titleEditText.getText().toString();
