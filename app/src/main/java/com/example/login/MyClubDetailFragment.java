@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -84,6 +85,22 @@ public class MyClubDetailFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         db = FirebaseFirestore.getInstance();
+
+        db.collection("clubs")
+                .document(clubID)
+                .collection("events")
+                .document(eventID)
+                .get()
+                .addOnSuccessListener(Doc -> {
+                            if (Doc.exists()) {
+                                if (Doc.contains("recruitNum"))
+                                    binding.joinButton.setVisibility(View.VISIBLE);
+                            }
+                        })
+                .addOnFailureListener(e -> { Log.w("LSJ", "Error getting documents.");
+                });
+;
+
         binding.joinButton.setOnClickListener(v -> {
             String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
@@ -154,6 +171,7 @@ public class MyClubDetailFragment extends Fragment {
                                 });
                     });
         });
+
         binding.back.setOnClickListener(v -> {
             requireActivity()
                     .getSupportFragmentManager()

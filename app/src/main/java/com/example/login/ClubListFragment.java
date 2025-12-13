@@ -344,6 +344,22 @@ public class ClubListFragment extends Fragment {
                                 });
                 }
             }});
+
+            // club inform으로 이동
+            holder.btnDetail.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("clubId", item.getClubId());
+
+                    ClubInformFragment fragment = new ClubInformFragment();
+                    fragment.setArguments(bundle);
+                    getParentFragmentManager().beginTransaction()
+                            .replace(R.id.full_screen_container, fragment)
+                            .addToBackStack(null)
+                            .commit();
+                }
+            });
         }
 
         @Override
@@ -355,12 +371,14 @@ public class ClubListFragment extends Fragment {
             TextView tvName, tvDesc;
             ImageView ivImage;
             ImageButton btnFavorite;
+            Button btnDetail;
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);
                 tvName = itemView.findViewById(R.id.tv_group_name);
                 tvDesc = itemView.findViewById(R.id.tv_group_description);
                 ivImage = itemView.findViewById(R.id.club_image);
                 btnFavorite = itemView.findViewById(R.id.btn_favorite);
+                btnDetail = itemView.findViewById(R.id.btn_details);
             }
         }
     }
