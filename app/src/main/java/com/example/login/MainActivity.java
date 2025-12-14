@@ -196,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateUI(FirebaseUser user) {
         if (user != null) {
-            String info = "로그인 성공!\nEmail: " + user.getEmail() + "\nUID: " + user.getUid();
+            String info = "로그인 성공!";
             Toast.makeText(this, info, Toast.LENGTH_LONG).show();
             Log.d("LSJ", info);
         } else {

@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import com.example.login.databinding.FragmentAdminCalendarBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.DayViewDecorator;
 import com.prolificinteractive.materialcalendarview.DayViewFacade;
@@ -127,7 +128,7 @@ public class AdminCalendarFragment extends Fragment {
                     if (task.isSuccessful()) {
                         if (!task.getResult().isEmpty()) {
                             // 1. 검색된 문서가 있음
-                            for (com.google.firebase.firestore.QueryDocumentSnapshot document : task.getResult()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
                                 Log.d("JHM", "관리자 정보 찾음 (Doc ID): " + document.getId());
                                 Log.d("JHM", "User Admin Data: " + document.getData());
 
@@ -204,12 +205,11 @@ public class AdminCalendarFragment extends Fragment {
                                 Log.d("JHM", "이벤트 파싱 시도 - Title: " + title + ", Start: " + startDateStr + ", End: " + endDateStr);
 
                                 if (startDateStr != null && endDateStr != null) {
-                                    // 1. 공백을 기준으로 날짜와 시간 분리 ("2025-12-25 10:34" -> "2025-12-25")
-                                    // 형식이 "yyyy-MM-dd HH:mm" 이므로 첫 번째 부분([0])만 가져오면 됩니다.
+                                    // 공백을 기준으로 날짜와 시간 분리 ("2025-12-25 10:34" -> "2025-12-25")
                                     String datePartStart = startDateStr.split(" ")[0];
                                     String datePartEnd = endDateStr.split(" ")[0];
 
-                                    // 2. 날짜 부분 파싱 ("-" 기준 분리)
+                                    // 날짜 부분 파싱 ("-" 기준 분리)
                                     String[] startParts = datePartStart.split("-");
                                     String[] endParts = datePartEnd.split("-");
 
@@ -224,8 +224,7 @@ public class AdminCalendarFragment extends Fragment {
 
                                         Log.d("JHM", "날짜 변환 성공: " + startYear + "-" + startMonth + "-" + startDay + " ~ " + endYear + "-" + endMonth + "-" + endDay);
 
-                                        // 3. 시간 정보 추출 (필요하다면 사용, 여기서는 "HH:mm" 부분을 그대로 사용하거나 파싱)
-                                        // 예: "10:34"
+                                        // 시간 추출
                                         String timeString = (startDateStr.split(" ").length > 1) ? startDateStr.split(" ")[1] : "00:00";
 
                                         // 날짜 범위 처리 및 데이터 추가
