@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.login.databinding.ActivityEventListBinding; // 바인딩 클래스 이름은 XML 파일명에 따라 다를 수 있습니다.
 import com.example.login.databinding.EventCardviewBinding;
 import com.google.firebase.auth.FirebaseAuth;
@@ -197,11 +198,15 @@ public class EventListFragment extends Fragment {
 
 
             String imageUri = event.getImageUri();
-            if (imageUri != null){
-                Uri uri = Uri.parse(imageUri);
-                holder.binding.imageArea.setImageURI(uri);
-                Log.d("LSJ", "Image changed");
-            } else holder.binding.imageArea.setImageResource(R.drawable.image);
+            if (imageUri == null || imageUri.isEmpty()) {
+                holder.binding.imageArea.setImageResource(R.drawable.image);
+            } else {
+                Glide.with(holder.itemView.getContext())
+                        .load(imageUri)
+                        .placeholder(R.drawable.image)
+                        .error(R.drawable.image)
+                        .into(holder.binding.imageArea);
+            }
 
             holder.binding.viewButton.setOnClickListener(v -> {
                 Bundle bundle = new Bundle();

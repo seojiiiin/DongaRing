@@ -3,6 +3,7 @@ package com.example.login;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -13,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
 import android.widget.AdapterView;
 import android.widget.DatePicker;
 import android.widget.NumberPicker;
@@ -30,6 +32,8 @@ import androidx.fragment.app.Fragment;
 import com.example.login.databinding.FragmentAddEventBinding;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -125,21 +129,48 @@ public class AddEventFragment extends Fragment {
 
         // 제출 버튼
         binding.submitButton.setOnClickListener(v -> {
-            saveEvent();
+            if (selectedFile != null) uploadImgAndSaveEvent();
+            else saveEvent(null);
         });
     }
 
+    private void uploadImgAndSaveEvent() {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+
+        ContentResolver resolver = requireContext().getContentResolver();
+        String mimeType = resolver.getType(selectedFile);
+        String extension = MimeTypeMap.getSingleton()
+                .getExtensionFromMimeType(mimeType);
+
+        if (extension == null) {
+            extension = "jpg"; // fallback
+        }
+        StorageReference storageRef = storage.getReference().child("events/" + System.currentTimeMillis() + extension);
+
+        storageRef.putFile(selectedFile)
+                .continueWithTask(task -> {
+                    if (!task.isSuccessful()) {
+                        throw task.getException();
+                    }
+                    return storageRef.getDownloadUrl();
+                })
+                .addOnSuccessListener(downloadUri -> {
+                    String imageUrl = downloadUri.toString();
+                    saveEvent(imageUrl); // downloadUrl 넘김
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("LSJ", "Image upload failed", e);
+                });
+    }
+
     /// firestore의 clubs 컬렉션에서 해당 club name의 하위 컬렉션인 events에 문서 저장하도록
-    private void saveEvent() {
+    private void saveEvent(@Nullable String imageUrl) {
 
         String title = binding.titleEditText.getText().toString();
         String start = binding.startDateEditText.getText().toString();
         String end = binding.endDateEditText.getText().toString();
         String location = binding.location.getText().toString();
         String content = binding.content.getText().toString();
-
-        String selectedUriString = (selectedFile != null) ? selectedFile.toString() : null;
-
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         String clubId = getArguments().getString("clubId");
@@ -151,7 +182,7 @@ public class AddEventFragment extends Fragment {
         event.put("endDate", end);
         event.put("location", location);
         event.put("content", content);
-        event.put("imageUri", selectedUriString);
+        event.put("imageUri", imageUrl);
         event.put("visibility", selectedScope);
         if (recruitNum != -1) event.put("recruitNum", recruitNum);
 
