@@ -20,6 +20,8 @@ import com.example.login.databinding.FragmentCalendarBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.DayViewDecorator;
 import com.prolificinteractive.materialcalendarview.DayViewFacade;
@@ -107,12 +109,10 @@ public class CalendarFragment extends Fragment {
             return;
         }
 
-        // 모든 동아리(clubs)를 가져와서 이벤트를 조회합니다.
         db.collection("clubs").get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 if (task.getResult() != null) {
                     for (com.google.firebase.firestore.QueryDocumentSnapshot clubDoc : task.getResult()) {
-                        // 각 동아리 문서 ID를 이용해 이벤트 조회 함수 호출
                         fetchClubEvents(clubDoc.getId());
                     }
                 }
@@ -142,8 +142,8 @@ public class CalendarFragment extends Fragment {
                 });
     }
 
-    private void parseAndShowEvents(com.google.firebase.firestore.QuerySnapshot result) {
-        for (com.google.firebase.firestore.QueryDocumentSnapshot document : result) {
+    private void parseAndShowEvents(QuerySnapshot result) {
+        for (QueryDocumentSnapshot document : result) {
             try {
                 // visibility 체크
                 Boolean visibility = document.getBoolean("visibility");
@@ -274,7 +274,7 @@ public class CalendarFragment extends Fragment {
     }
 
     // Event Model Class
-    private static class Event {
+    class Event {
         String time;
         String title;
 
