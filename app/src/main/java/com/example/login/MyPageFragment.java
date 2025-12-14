@@ -112,16 +112,13 @@ public class MyPageFragment extends Fragment {
         });
 
         List<CardModel> eventList = new ArrayList<>();
-        eventList = new ArrayList<>();
-
-        //이벤트
-        eventList.add(new CardModel("이벤트 이름1", "동아리 이름1", R.drawable.logo, 2024, 10, 22));
-        eventList.add(new CardModel("이벤트 이름2", "동아리 이름2", R.drawable.logo, 2024, 11, 22));
-
+        //eventList.add(new CardModel("이벤트 이름1", "동아리 이름1", R.drawable.logo, 2024, 10, 22));
+        //eventList.add(new CardModel("이벤트 이름2", "동아리 이름2", R.drawable.logo, 2024, 11, 22));
         RecyclerView eventRecyclerView = binding.eventList;
         eventRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         EventAdapter eventAdapter = new EventAdapter(eventList);
         eventRecyclerView.setAdapter(eventAdapter);
+        loadJoinedClubEvents(eventList, eventAdapter);
 
         //신청한 동아리 DB에서 불러오기 (users -> appliedClubs)
         LinearLayout clubListContainer = binding.clubListContainer;
@@ -133,8 +130,77 @@ public class MyPageFragment extends Fragment {
         // 가입한 동아리 목록 불러오기
         LinearLayout registeredClubListContainer = binding.registeredClubListContainer;
         loadRegisteredClubs(registeredClubListContainer);
-    }
+    }private void loadJoinedClubEvents(List<CardModel> list, EventAdapter adapter) {
+        // 1. clubs 컬렉션의 모든 문서(모든 동아리)를 가져옴
+        db.collection("clubs")
+                .get()
+                .addOnSuccessListener(clubSnapshots -> {
+                    for (DocumentSnapshot clubDoc : clubSnapshots.getDocuments()) {
+                        String clubId = clubDoc.getId();
+                        String clubName = clubDoc.getString("name"); // 필드명 확인 필요
 
+                        // 2. 현재 유저가 이 동아리에 가입했는지 확인
+                        boolean isJoined = false;
+                        if (clubs != null) {
+                            for (String joinedId : clubs) {
+                                if (clubId.equals(joinedId)) {
+                                    isJoined = true;
+                                    break;
+                                }
+                            }
+                        }
+
+                        // 람다식 내부에서 사용하기 위해 final 변수 처리
+                        final boolean finalIsJoined = isJoined;
+
+                        // 3. 해당 동아리의 events 서브 컬렉션 접근
+                        clubDoc.getReference().collection("events")
+                                .get()
+                                .addOnSuccessListener(eventSnapshots -> {
+                                    // [예외처리] 컬렉션이 없거나 문서가 없으면 건너뜀
+                                    if (eventSnapshots.isEmpty()) {
+                                        return;
+                                    }
+
+                                    for (DocumentSnapshot eventDoc : eventSnapshots.getDocuments()) {
+                                        // visibility 필드 확인 (없으면 null)
+                                        String visibility = eventDoc.getString("visibility");
+
+                                        // [조건] 내가 가입한 동아리 이거나 OR 이벤트가 '전체' 공개인 경우
+                                        boolean isPublicEvent = "전체".equals(visibility);
+
+                                        if (finalIsJoined || isPublicEvent) {
+                                            String eventName = eventDoc.getString("title");
+                                            String startDate = eventDoc.getString("startDate"); // "2024-11-22 10:00"
+
+                                            if (startDate != null) {
+                                                try {
+                                                    int[] ymd = parseDate(startDate);
+
+                                                    CardModel model = new CardModel(
+                                                            eventName != null ? eventName : "제목 없음",
+                                                            clubName != null ? clubName : "동아리",
+                                                            R.drawable.logo, // 이미지 로딩 로직 필요시 수정
+                                                            ymd[0], ymd[1], ymd[2]
+                                                    );
+                                                    list.add(model);
+                                                } catch (Exception e) {
+                                                    Log.e("LSJ", "Date parse error: " + startDate);
+                                                }
+                                            }
+                                        }
+                                    }
+                                    // 데이터가 추가되었을 수 있으므로 갱신
+                                    adapter.notifyDataSetChanged();
+                                })
+                                .addOnFailureListener(e -> {
+                                    // 권한 문제 등으로 실패할 경우 로그 출력 (앱이 죽지는 않음)
+                                    Log.w("LSJ", "Failed to load events for club: " + clubName, e);
+                                });
+                    }
+                })
+                .addOnFailureListener(e -> Log.e("LSJ", "Failed to load clubs list", e));
+    }
     private void loadAppliedClubs(LinearLayout clubListContainer) {
         clubListContainer.removeAllViews();
 
@@ -244,6 +310,9 @@ public class MyPageFragment extends Fragment {
     }
 
     private int[] parseDate(String dateString) {
+        if (dateString.contains(" ")) {
+            dateString = dateString.split(" ")[0];
+        }
         String[] parts = dateString.split("-");
         int year = Integer.parseInt(parts[0]);
         int month = Integer.parseInt(parts[1]);
@@ -372,9 +441,17 @@ public class MyPageFragment extends Fragment {
                 titleArea.setText(event.getTitle());
                 amountArea.setText(event.getClubName());
 
-                // 날짜 포맷 설정 (예: "10월 22일")
-                String dateText = event.getYear() + "년 " + event.getMonth() + "월 " + event.getDate() + "일";
-                dateArea.setText(dateText);
+                String[] englishMonths = {"JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"};
+                String monthText;
+                int monthIndex = event.getMonth() - 1;
+                if (monthIndex >= 0 && monthIndex < englishMonths.length) {
+                    monthText = englishMonths[monthIndex];
+                } else {
+                    monthText = String.valueOf(event.getMonth());
+                }
+
+                // [수정] "Dec, 7" 형식으로 설정
+                dateArea.setText(monthText + " " + event.getDate());
             }
         }
     }
