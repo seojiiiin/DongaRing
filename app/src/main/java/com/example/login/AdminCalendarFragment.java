@@ -103,7 +103,13 @@ public class AdminCalendarFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        binding.gear.setOnClickListener(v -> {
+            getParentFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.full_screen_container, new SettingFragment("admin"))
+                    .addToBackStack(null)
+                    .commit();
+        });
     }
     private void loadEvents() {
         eventMap.clear();
