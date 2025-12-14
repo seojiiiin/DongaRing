@@ -180,16 +180,16 @@ public class EventDetail extends Fragment {
                         // 만약 DB에 title로 저장되어 있을 수도 있으니 null 체크 (선택사항)
                         if (title == null) title = doc.getString("title");
 
-                        startDate = doc.getString("start date");
-                        endDate = doc.getString("end date");
+                        startDate = doc.getString("startDate");
+                        endDate = doc.getString("endDate");
                         location = doc.getString("location");
                         content = doc.getString("content");
                         imageUri = doc.getString("imageUri");
 
                         binding.eventName.setText(title);
-                        binding.startDate.setText(startDate);
-                        binding.endDate.setText(endDate);
-                        binding.location.setText(location);
+                        binding.startDate.setText("시작시각 : " + startDate);
+                        binding.endDate.setText("종료시각 : " + endDate);
+                        binding.location.setText("장소 : " + location);
                         binding.content.setText(content);
 
                         // recruit num이 있으면 신청자 뷰 보이기 (없으면 숨기기 로직은 유지하되, loadApplicants에서 데이터가 있으면 보이게 처리됨)

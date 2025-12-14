@@ -32,6 +32,7 @@ public class SettingFragment extends Fragment {
     private AlertDialog logoutDialog;
     private int dialogType = -1;
     private static final int DIALOG_LOGOUT = 0;
+    private static final int DIALOG_INFO = 1;
 
     private DialogInterface.OnClickListener dialogListener = new DialogInterface.OnClickListener() {
         @Override
@@ -46,12 +47,15 @@ public class SettingFragment extends Fragment {
                     startActivity(new Intent(requireContext(), MainActivity.class));
                 }
             }
+            else if (dialogType == DIALOG_INFO){
+                if (which == DialogInterface.BUTTON_POSITIVE){
+                    Log.d("LSJ", "알람 설정 적용");
+                }
+            }
         }
     };
 
-    public SettingFragment(){
-
-    }
+    public SettingFragment(){}
     public SettingFragment(String userType) {
         this.userType = userType;
         // Required empty public constructor
@@ -126,7 +130,24 @@ public class SettingFragment extends Fragment {
                     .addToBackStack(null)
                     .commit();
         });
-        
+
+        //개인정보 버튼
+        binding.profileSetting.setOnClickListener(v -> {
+            dialogType = DIALOG_INFO;
+
+            AlertDialog infoDialog = new AlertDialog.Builder(requireContext())
+                    .setTitle("개인정보 수집 유형")
+                    .setMessage("[이름, 이메일, 학번, 가입한 동아리, 관심 동아리, 신청한 동아리, 신청한 이벤트]")
+                    .setPositiveButton("확인", (dialog, which) -> {
+                        // 확인 버튼 누르면 자동으로 dismiss 됨
+                        Log.d("동아링", "프로필 설정 다이얼로그 확인");
+                    })
+                    .setCancelable(true) // 바깥 영역 클릭 시 닫힘
+                    .create();
+
+            infoDialog.show();
+        });
+
         //로그아웃버튼
         binding.logout.setOnClickListener(v -> {
             dialogType = DIALOG_LOGOUT;
