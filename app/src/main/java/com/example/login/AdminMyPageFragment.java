@@ -142,6 +142,14 @@ public class AdminMyPageFragment extends Fragment {
         eventAdapter = new EventAdapter(eventList);
         eventRecyclerView.setAdapter(eventAdapter);
 
+        binding.gear.setOnClickListener(v -> {
+            getParentFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.full_screen_container, new SettingFragment("admin"))
+                    .addToBackStack(null)
+                    .commit();
+        });
+
         /// 제출 누르면 강종됨;;
         binding.addEvent.setOnClickListener(v -> {
             AddEventFragment fragment = new AddEventFragment();

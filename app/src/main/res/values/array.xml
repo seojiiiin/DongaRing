@@ -4,12 +4,4 @@
         <item>공지</item>
         <item>모집</item>
     </string-array>
-
-    <string-array name="dialog_array">
-        <item>알림 1</item>
-        <item>알림 2</item>
-        <item>알림 3</item>
-        <item>알림 4</item>
-        <item>알림 5</item>
-    </string-array>
 </resources>
