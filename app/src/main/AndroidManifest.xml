@@ -34,8 +34,6 @@
         <activity
             android:name=".SignUpActivity"
             android:exported="false" />
-        <activity android:name=".MyClubActivity"
-            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
