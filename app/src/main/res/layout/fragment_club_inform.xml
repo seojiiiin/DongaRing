@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
-    android:id="@+id/main"
+    android:id="@+id/clubInfo"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -42,7 +42,7 @@
             app:layout_constraintBottom_toBottomOf="parent">
 
             <TextView
-                android:id="@+id/clubTitle"
+                android:id="@+id/clubName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="동아리 이름"
@@ -50,7 +50,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/clubSubtitle"
+                android:id="@+id/clubDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="동아리 소개"
@@ -71,13 +71,13 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- ================= 하단 버튼 (고정) ================= -->
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/applyBtn"
         android:layout_width="0dp"
         android:layout_height="65dp"
         android:text="가입신청 하러가기"
         android:textColor="@android:color/white"
-        android:backgroundTint="#57D4FB"
+        android:backgroundTint="@color/apply_btn_selector"
         android:layout_margin="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -104,7 +104,6 @@
                 android:id="@+id/event_list"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:orientation="horizontal"
                 android:layout_margin="10dp"/>
 
             <View
