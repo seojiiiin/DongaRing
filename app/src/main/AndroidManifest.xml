@@ -23,9 +23,6 @@
             android:name=".AdminMyPageActivity"
             android:exported="false" />
         <activity
-            android:name=".EventListActivity"
-            android:exported="true" />
-        <activity
             android:name=".MyPageActivity"
             android:exported="false" />
         <activity

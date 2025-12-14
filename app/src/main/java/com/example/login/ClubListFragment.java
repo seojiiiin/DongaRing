@@ -346,16 +346,13 @@ public class ClubListFragment extends Fragment {
             }});
 
             // club inform으로 이동
-            holder.btnDetail.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String clubId = item.getClubId();
+            holder.btnDetail.setOnClickListener(v -> {
+                String clubId = item.getClubId();
 
-                    getParentFragmentManager().beginTransaction()
-                            .replace(R.id.full_screen_container, new ClubInformFragment().newInstance(clubId, ""))
-                            .addToBackStack(null)
-                            .commit();
-                }
+                getParentFragmentManager().beginTransaction()
+                        .replace(R.id.full_screen_container, new ClubInformFragment().newInstance(clubId, ""))
+                        .addToBackStack(null)
+                        .commit();
             });
         }
 

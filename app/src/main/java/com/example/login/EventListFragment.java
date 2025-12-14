@@ -215,14 +215,12 @@ public class EventListFragment extends Fragment {
                 EventDetail detail = new EventDetail();
                 detail.setArguments(bundle);
 
-                if (context instanceof AppCompatActivity) {
-                    ((AppCompatActivity) context)
-                            .getSupportFragmentManager()
+                getParentFragmentManager()
                             .beginTransaction()
                             .replace(R.id.full_screen_container, detail)
                             .addToBackStack(null)
                             .commit();
-                }
+
             });
         }
 
