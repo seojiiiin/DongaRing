@@ -234,11 +234,18 @@ public class ClubInformFragment extends Fragment {
 
             holder.eventTitle.setText(event.getTitle());
 
-            // 이미지 로딩
-            Glide.with(holder.itemView.getContext())
-                    .load(event.getImageUri())
-                    .placeholder(R.drawable.image)
-                    .into(holder.posterImage);
+            String imageUrl = event.getImageUri();
+            Log.d("LSJ", "image uri= " + imageUrl);
+
+            if (imageUrl == null || imageUrl.isEmpty()) {
+                holder.posterImage.setImageResource(R.drawable.image);
+            } else {
+                Glide.with(holder.itemView.getContext())
+                        .load(imageUrl)
+                        .placeholder(R.drawable.image)
+                        .error(R.drawable.image)
+                        .into(holder.posterImage);
+            }
         }
 
         @Override

@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
+import com.bumptech.glide.Glide;
 import com.example.login.databinding.ActivityEventListBinding;
 import com.example.login.databinding.EventCardviewBinding;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -204,11 +205,16 @@ class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.ViewHolder>
 
 
         String imageUri = event.getImageUri();
-        if (imageUri != null){
-            Uri uri = Uri.parse(imageUri);
-            holder.binding.imageArea.setImageURI(uri);
-            Log.d("LSJ", "Image changed");
-        } else holder.binding.imageArea.setImageResource(R.drawable.image);
+        if (imageUri == null || imageUri.isEmpty()) {
+                        holder.binding.imageArea.setImageResource(R.drawable.image);
+                    } else {
+                        Glide.with(holder.itemView.getContext())
+                                .load(imageUri)
+                                .placeholder(R.drawable.image)
+                                .error(R.drawable.image)
+                                .into(holder.binding.imageArea);
+                    }
+
 
         holder.binding.viewButton.setOnClickListener(v -> {
             Bundle bundle = new Bundle();
