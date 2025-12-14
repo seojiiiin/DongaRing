@@ -139,7 +139,7 @@ public class ClubListFragment extends Fragment {
                                         String docId = document.getId();
                                         Log.d("JHM", "문서 ID: " + document.getId() + ", 데이터: " + document.getData());
                                         // 이미지 URL 필드가 있다면 가져오기 (없으면 null 처리되어 어댑터에서 기본 이미지 사용)
-                                        String image = document.getString("imageUri");
+                                        String image = document.getString("logo");
 
                                         if (name == null) name = "동아리명 없음";
                                         if (description == null) description = "";
@@ -287,15 +287,15 @@ public class ClubListFragment extends Fragment {
 
             ImageView ivImage = holder.itemView.findViewById(R.id.club_image);
             if (ivImage != null) {
-                // imageUri가 null인지 체크 후 Glide로 로딩
                 if (item.getImage() != null && !item.getImage().isEmpty()) {
-                    Glide.with(ivImage.getContext())
-                            .load(item.getImage())     // Firestore 또는 Storage 경로
-                            .placeholder(R.drawable.logo) // 로딩 중 이미지
-                            .error(R.drawable.logo)       // 실패 시 기본 이미지
-                            .into(ivImage);
+                    Glide.with(holder.itemView.getContext())
+                            .load(item.getImage())
+                            .placeholder(R.drawable.image)
+                            .error(R.drawable.image)
+                            .centerCrop()
+                            .into(holder.ivImage);
                 } else {
-                    ivImage.setImageResource(R.drawable.logo);
+                    holder.ivImage.setImageResource(R.drawable.image);
                 }
             }
 
@@ -371,6 +371,8 @@ public class ClubListFragment extends Fragment {
                 tvName = itemView.findViewById(R.id.tv_group_name);
                 tvDesc = itemView.findViewById(R.id.tv_group_description);
                 ivImage = itemView.findViewById(R.id.club_image);
+
+
                 btnFavorite = itemView.findViewById(R.id.btn_favorite);
                 btnDetail = itemView.findViewById(R.id.btn_details);
             }
