@@ -150,7 +150,6 @@ public class AdminMyPageFragment extends Fragment {
                     .commit();
         });
 
-        /// 제출 누르면 강종됨;;
         binding.addEvent.setOnClickListener(v -> {
             AddEventFragment fragment = new AddEventFragment();
 

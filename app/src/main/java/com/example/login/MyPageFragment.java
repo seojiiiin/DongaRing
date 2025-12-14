@@ -293,6 +293,8 @@ public class MyPageFragment extends Fragment {
 
 
                             clubLogo.setImageResource(club.getImage());
+
+
                             clubName.setText(club.getClubName());
                             clubDescription.setText(club.getDescription());
                             arrowButton.setOnClickListener(v -> {

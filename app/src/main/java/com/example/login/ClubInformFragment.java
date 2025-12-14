@@ -152,6 +152,32 @@ public class ClubInformFragment extends Fragment {
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         db.collection("users")
+                        .document(userId)
+                        .get()
+                        .addOnSuccessListener(doc -> {
+                            if (!doc.exists()) return;
+
+                            List<String> favoriteClubs = (List<String>) doc.get("favoriteClubs");
+                            if (favoriteClubs != null && favoriteClubs.contains(clubID)) {
+                                binding.favBtn.setImageResource(R.drawable.ic_heart_filled);
+                                binding.favBtn.setOnClickListener(v -> {
+                                    binding.favBtn.setImageResource(R.drawable.ic_heart);
+                                    java.util.Map<String, Object> update = new java.util.HashMap<>();
+                                    update.put("favoriteClubs", com.google.firebase.firestore.FieldValue.arrayRemove(clubID));
+                                });
+                            } else {
+                                binding.favBtn.setImageResource(R.drawable.ic_heart);
+                                binding.favBtn.setOnClickListener(v -> {
+                                    binding.favBtn.setImageResource(R.drawable.ic_heart_filled);
+                                    java.util.Map<String, Object> update = new java.util.HashMap<>();
+                                    update.put("favoriteClubs", com.google.firebase.firestore.FieldValue.arrayUnion(clubID));
+                                });
+                                }
+                            }).addOnFailureListener(e -> {
+                            Log.w("LSJ", "Error getting documents.", e);
+                        });
+
+        db.collection("users")
                 .document(userId)
                 .get()
                 .addOnSuccessListener(doc -> {
