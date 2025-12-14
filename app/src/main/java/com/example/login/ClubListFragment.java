@@ -348,7 +348,6 @@ public class ClubListFragment extends Fragment {
             // club inform으로 이동
             holder.btnDetail.setOnClickListener(v -> {
                 String clubId = item.getClubId();
-
                 getParentFragmentManager().beginTransaction()
                         .replace(R.id.full_screen_container, new ClubInformFragment().newInstance(clubId, ""))
                         .addToBackStack(null)

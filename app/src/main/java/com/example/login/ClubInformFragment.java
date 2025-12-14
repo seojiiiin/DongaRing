@@ -95,6 +95,7 @@ public class ClubInformFragment extends Fragment {
                 .addOnSuccessListener(doc -> {
                     binding.clubName.setText(doc.getString("name"));
                     binding.clubDescription.setText(doc.getString("activities"));
+                    binding.description.setText(doc.getString("description"));
                 }).addOnFailureListener(e -> {
                     Log.d("동아링", "Error getting documents.", e);
                 });

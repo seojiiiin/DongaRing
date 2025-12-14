@@ -170,7 +170,11 @@
                 android:layout_height="1dp"
                 android:background="#CCCCCC"
                 android:layout_margin="5dp"/>
-
+            <TextView
+                android:id="@+id/description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"/>
 
             <!-- 여기에 동아리 소개 / 활동 / 설명 계속 추가 -->
         </LinearLayout>
