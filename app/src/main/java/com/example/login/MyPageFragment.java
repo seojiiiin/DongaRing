@@ -104,15 +104,9 @@ public class MyPageFragment extends Fragment {
 
         //설정
         binding.gear.setOnClickListener(v -> {
-            Bundle userInfo = new Bundle();
-            userInfo.putString("uid", user.getUid());
-
-            Fragment fragment = new SettingFragment();
-            fragment.setArguments(userInfo);
-
             getParentFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.full_screen_container, fragment)
+                    .replace(R.id.full_screen_container, new SettingFragment())
                     .addToBackStack(null)
                     .commit();
         });
