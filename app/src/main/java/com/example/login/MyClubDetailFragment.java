@@ -68,10 +68,6 @@ public class MyClubDetailFragment extends Fragment {
             clubID = getArguments().getString(ARG_PARAM1);
             eventID = getArguments().getString(ARG_PARAM2);
         }
-
-
-
-
     }
 
     @Override

@@ -30,11 +30,8 @@ public class SettingFragment extends Fragment {
 
     private FragmentSettingBinding binding;
     private AlertDialog logoutDialog;
-    private AlertDialog alarmDialog;
     private int dialogType = -1;
-
     private static final int DIALOG_LOGOUT = 0;
-    private static final int DIALOG_NOTIFICATION = 1;
 
     private DialogInterface.OnClickListener dialogListener = new DialogInterface.OnClickListener() {
         @Override
@@ -49,15 +46,6 @@ public class SettingFragment extends Fragment {
                     startActivity(new Intent(requireContext(), MainActivity.class));
                 }
             }
-            else if (dialogType == DIALOG_NOTIFICATION){
-                String[] data = getResources().getStringArray(R.array.dialog_array);
-                Log.d("LSJ", data[which] + " 선택");
-
-                if (which == DialogInterface.BUTTON_POSITIVE){
-                    Log.d("LSJ", "알람 설정 적용");
-                }
-            }
-
         }
     };
 
@@ -129,26 +117,14 @@ public class SettingFragment extends Fragment {
                         Log.e("JHM", "데이터 가져오기 실패", e);
                     });
         }
-        
-        //알람버튼
-        binding.alarmSetting.setOnClickListener(v -> {
-            dialogType = DIALOG_NOTIFICATION;
 
-            String[] data = getResources().getStringArray(R.array.dialog_array);
-            boolean[] checked = new boolean[data.length];
-
-            alarmDialog = new AlertDialog.Builder(requireContext())
-                    .setTitle("알림 설정")
-                    .setMultiChoiceItems(data, checked, (dialog, which, isChecked) -> {
-                        checked[which] = isChecked;
-                        Log.d("LSJ", data[which] + (isChecked ? " 선택" : " 해제"));
-                    })
-                    .setPositiveButton("적용", dialogListener)
-                    .setNegativeButton("취소", null)
-                    .create();
-
-            alarmDialog.show();
-
+        if (collectionName.equals("users_admin")) binding.chatting.setVisibility(view.VISIBLE);
+        binding.chatting.setOnClickListener(v -> {
+            getParentFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.full_screen_container, new ChatRoomFragment())
+                    .addToBackStack(null)
+                    .commit();
         });
         
         //로그아웃버튼
