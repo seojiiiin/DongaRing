@@ -48,14 +48,6 @@ public class EventListFragment extends Fragment {
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.recyclerView.setAdapter(adapter);
 
-        binding.addButton.setOnClickListener(v -> {
-            getParentFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.main, new AddEventFragment())
-                    .addToBackStack(null)
-                    .commit();
-        });
-
         getParentFragmentManager().setFragmentResultListener(
                 "event_added",
                 this,

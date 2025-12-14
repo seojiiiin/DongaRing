@@ -176,7 +176,9 @@ public class AdminMyPageFragment extends Fragment {
 
                         String name = document.getString("name");
                         String description = document.getString("activities");
-                        ClubModel club = new ClubModel(name, description, R.drawable.logo);
+                        String logo = document.getString("logo");
+
+                        ClubModel club = new ClubModel(name, description, logo);
                         LinearLayout clubContainer = binding.club;
                         clubContainer.removeAllViews();
                         LayoutInflater inflater = getLayoutInflater();
@@ -192,7 +194,15 @@ public class AdminMyPageFragment extends Fragment {
                         TextView clubName = clubView.findViewById(R.id.club_name_text);
                         TextView clubDescription = clubView.findViewById(R.id.club_desc_text);
 
-                        clubLogo.setImageResource(club.getImage());
+                        if (club.getImage() != null && !club.getImage().isEmpty()) {
+                            Glide.with(clubLogo.getContext())
+                                    .load(club.getImage())        // 🔥 https URL
+                                    .placeholder(R.drawable.logo)
+                                    .error(R.drawable.logo)
+                                    .into(clubLogo);
+                        } else {
+                            clubLogo.setImageResource(R.drawable.logo);
+                        }
                         clubName.setText(club.getClubName());
                         clubDescription.setText(club.getDescription());
 
@@ -252,7 +262,7 @@ public class AdminMyPageFragment extends Fragment {
     class CardModel {
         private final String title;
         private final String clubName;
-        private final String  image;
+        private final String image;
 
         private final int year;
         private final int month;
@@ -296,12 +306,12 @@ public class AdminMyPageFragment extends Fragment {
     class ClubModel {
         private final String clubName;
         private final String description;
-        private final int image;
+        private final String logo;
 
-        public ClubModel(String clubName, String description, int image){
+        public ClubModel(String clubName, String description, String image){
             this.clubName = clubName;
             this.description = description;
-            this.image = image;
+            this.logo = image;
         }
 
         public String getClubName() {
@@ -312,12 +322,12 @@ public class AdminMyPageFragment extends Fragment {
             return description;
         }
 
-        public int getImage() {
-            return image;
+        public String getImage() {
+            return logo;
         }
         @Override
         public String toString(){
-            return "CardModel{" + "clubName='" + clubName + '\'' + ", description='" + description + '\'' + ", image=" + image + '}';
+            return "CardModel{" + "clubName='" + clubName + '\'' + ", description='" + description + '\'' + ", image=" + logo + '}';
         }
     }
     class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {
@@ -362,11 +372,11 @@ public class AdminMyPageFragment extends Fragment {
                 if (event.getImage() != null) {
                     Glide.with(imageArea.getContext())
                             .load(event.getImage())
-                            .placeholder(R.drawable.logo)   // 로딩 중 표시할 기본 이미지
-                            .error(R.drawable.logo)         // 실패 시 표시할 이미지
+                            .placeholder(R.drawable.image)   // 로딩 중 표시할 기본 이미지
+                            .error(R.drawable.image)         // 실패 시 표시할 이미지
                             .into(imageArea);
                 } else {
-                    imageArea.setImageResource(R.drawable.logo);
+                    imageArea.setImageResource(R.drawable.image);
                 }
 
                 titleArea.setText(event.getTitle());
