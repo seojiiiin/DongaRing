@@ -84,7 +84,7 @@ public class EventListFragment extends Fragment {
         FirebaseUser user = auth.getCurrentUser();
 
         if (user == null) {
-            Log.e("LSJ", "User not logged in");
+            Log.d("동아링", "User not logged in");
             return;
         }
 
@@ -123,20 +123,20 @@ public class EventListFragment extends Fragment {
                                                             adapter.notifyDataSetChanged();
                                                         }
                                                     })
-                                                    .addOnFailureListener(e -> Log.d("LSJ", "Failed to load sub events", e));
+                                                    .addOnFailureListener(e -> Log.d("동아링", "Failed to load sub events", e));
                                         }
                                     })
-                                    .addOnFailureListener(e -> Log.e("LSJ", "Failed to load club info", e));
+                                    .addOnFailureListener(e -> Log.d("동아링", "Failed to load club info", e));
                         } else {
-                            Log.d("LSJ", "This user is not an admin of any club.");
+                            Log.d("동아링", "This user is not an admin of any club.");
                             events.clear();
                             if (adapter != null) adapter.notifyDataSetChanged();
                         }
                     } else {
-                        Log.e("LSJ", "User admin info not found.");
+                        Log.d("동아링", "User admin info not found.");
                     }
                 })
-                .addOnFailureListener(e -> Log.e("LSJ", "Failed to load user admin doc", e));
+                .addOnFailureListener(e -> Log.d("동아링", "Failed to load user admin doc", e));
     }
 
     public static class EventModel {

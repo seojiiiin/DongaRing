@@ -123,7 +123,7 @@ public class AddEventFragment extends Fragment {
             RadioButton radioButton = view.findViewById(checkedId);
             if (radioButton != null) {
                 selectedScope = radioButton.getText().toString();
-                Log.d("LSJ", "Radio Selected: " +radioButton.getText());
+                Log.d("동아링", "Radio Selected: " +radioButton.getText());
             }
         });
 
@@ -159,7 +159,7 @@ public class AddEventFragment extends Fragment {
                     saveEvent(imageUrl); // downloadUrl 넘김
                 })
                 .addOnFailureListener(e -> {
-                    Log.e("LSJ", "Image upload failed", e);
+                    Log.d("동아링", "Image upload failed", e);
                 });
     }
 
@@ -193,7 +193,7 @@ public class AddEventFragment extends Fragment {
                     .document(docID)
                     .update(event)
                     .addOnSuccessListener(a -> {
-                        Log.d("LSJ", "update completed");
+                        Log.d("동아링", "update completed");
 
                         Bundle result = new Bundle();
                         result.putBoolean("success", true);
@@ -206,7 +206,7 @@ public class AddEventFragment extends Fragment {
             parentDocRef.collection("events")
                     .add(event)
                     .addOnSuccessListener(a -> {
-                        Log.d("LSJ", "registration completed");
+                        Log.d("동아링", "registration completed");
 
                         Bundle result = new Bundle();
                         result.putBoolean("success", true);
@@ -256,7 +256,7 @@ public class AddEventFragment extends Fragment {
 
         numberPicker.setOnValueChangedListener((picker, oldVal, newVal) -> {
             recruitNum = newVal;
-            Log.d("LSJ", "NumberPicker Changed: " + newVal);
+            Log.d("동아링", "NumberPicker Changed: " + newVal);
         });
 
         binding.extraContainer.addView(numberPicker);

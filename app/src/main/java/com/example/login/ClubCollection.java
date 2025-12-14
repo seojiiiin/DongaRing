@@ -226,11 +226,11 @@ public class ClubCollection extends AppCompatActivity {
 //            db.collection("clubs")
 //                    .add(club)
 //                    .addOnSuccessListener(documentReference -> {
-//                        Log.d("FirestoreAdd", "성공적으로 추가됨: " + club.get("name") +
+//                        Log.d("동아링", "성공적으로 추가됨: " + club.get("name") +
 //                                " (문서 ID: " + documentReference.getId() + ")");
 //                    })
 //                    .addOnFailureListener(e -> {
-//                        Log.w("FirestoreAdd", "추가 실패: " + club.get("name"), e);
+//                        Log.d("동아링", "추가 실패: " + club.get("name"), e);
 //                    });
 //        }
 //    }
@@ -252,7 +252,7 @@ public class ClubCollection extends AppCompatActivity {
                                     .document(docId)
                                     .set(club, SetOptions.merge())
                                     .addOnSuccessListener(aVoid -> {
-                                        Log.d("Firestore", name + " 업데이트 완료");
+                                        Log.d("동아링", name + " 업데이트 완료");
                                     });
 
                         } else {
@@ -260,7 +260,7 @@ public class ClubCollection extends AppCompatActivity {
                             db.collection("clubs")
                                     .add(club)
                                     .addOnSuccessListener(ref -> {
-                                        Log.d("Firestore", name + " 새로 생성됨");
+                                        Log.d("동아링", name + " 새로 생성됨");
                                     });
                         }
                     });

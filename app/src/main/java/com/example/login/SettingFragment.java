@@ -40,7 +40,7 @@ public class SettingFragment extends Fragment {
                 if (which == DialogInterface.BUTTON_POSITIVE){
                     //로그아웃
                     FirebaseAuth.getInstance().signOut();
-                    Log.d("LSJ", "로그아웃 완료");
+                    Log.d("동아링", "로그아웃 완료");
                     Toast.makeText(requireContext(), "로그아웃 되었습니다.", Toast.LENGTH_SHORT).show();
 
                     startActivity(new Intent(requireContext(), MainActivity.class));
@@ -108,13 +108,13 @@ public class SettingFragment extends Fragment {
                             binding.name.setText(name);
                             binding.email.setText(email);
 
-                            Log.d("JHM", "사용자 정보 로드 성공: " + name);
+                            Log.d("동아링", "사용자 정보 로드 성공: " + name);
                         } else {
-                            Log.d("JHM", "해당 문서가 존재하지 않습니다.");
+                            Log.d("동아링", "해당 문서가 존재하지 않습니다.");
                         }
                     })
                     .addOnFailureListener(e -> {
-                        Log.e("JHM", "데이터 가져오기 실패", e);
+                        Log.d("동아링", "데이터 가져오기 실패", e);
                     });
         }
 

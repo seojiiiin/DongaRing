@@ -86,7 +86,7 @@ public class MyPageFragment extends Fragment {
         //user 이름 불러오기
         user = mAuth.getCurrentUser();
         if (user == null) {
-            Log.w("LSJ", "user is null");
+            Log.d("동아링", "user is null");
             return;
         }
         db.collection("users")
@@ -96,11 +96,11 @@ public class MyPageFragment extends Fragment {
                     if (!query.isEmpty()) {
                         String userName = query.getDocuments().get(0).getString("name");
                         binding.userName.setText(userName);
-                        Log.d("LSJ", "userName: " + userName);
+                        Log.d("동아링", "userName: " + userName);
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Log.w("LSJ", "Error getting documents.", e);
+                    Log.d("동아링", "Error getting documents.", e);
                 });
 
         //설정
@@ -186,7 +186,7 @@ public class MyPageFragment extends Fragment {
                                                     );
                                                     list.add(model);
                                                 } catch (Exception e) {
-                                                    Log.e("LSJ", "Date parse error: " + startDate);
+                                                    Log.d("동아링", "Date parse error: " + startDate);
                                                 }
                                             }
                                         }
@@ -196,11 +196,11 @@ public class MyPageFragment extends Fragment {
                                 })
                                 .addOnFailureListener(e -> {
                                     // 권한 문제 등으로 실패할 경우 로그 출력 (앱이 죽지는 않음)
-                                    Log.w("LSJ", "Failed to load events for club: " + clubName, e);
+                                    Log.d("동아링", "Failed to load events for club: " + clubName, e);
                                 });
                     }
                 })
-                .addOnFailureListener(e -> Log.e("LSJ", "Failed to load clubs list", e));
+                .addOnFailureListener(e -> Log.d("동아링", "Failed to load clubs list", e));
     }
     private void loadAppliedClubs(LinearLayout clubListContainer) {
         clubListContainer.removeAllViews();
@@ -261,12 +261,12 @@ public class MyPageFragment extends Fragment {
                                                 clubListContainer.addView(clubView);
                                             }
                                         })
-                                        .addOnFailureListener(e -> Log.d("JHM", "동아리 세부정보 가져오기 실패 : " + clubUid, e));
+                                        .addOnFailureListener(e -> Log.d("동아링", "동아리 세부정보 가져오기 실패 : " + clubUid, e));
                             }
                         }
                     }
                 })
-                .addOnFailureListener(e -> Log.w("JHM", "Error getting user info", e));
+                .addOnFailureListener(e -> Log.d("동아링", "Error getting user info", e));
     }
 
     private void loadRegisteredClubs(LinearLayout container){
@@ -318,7 +318,7 @@ public class MyPageFragment extends Fragment {
 
                     })
                     .addOnFailureListener(e -> {
-                        Log.w("LSJ", "Error getting documents.", e);
+                        Log.d("동아링", "Error getting documents.", e);
                     });
         }
     }

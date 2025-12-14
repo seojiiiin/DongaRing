@@ -129,27 +129,27 @@ public class AdminCalendarFragment extends Fragment {
                         if (!task.getResult().isEmpty()) {
                             // 1. 검색된 문서가 있음
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d("JHM", "관리자 정보 찾음 (Doc ID): " + document.getId());
-                                Log.d("JHM", "User Admin Data: " + document.getData());
+                                Log.d("동아링", "관리자 정보 찾음 (Doc ID): " + document.getId());
+                                Log.d("동아링", "User Admin Data: " + document.getData());
 
                                 String clubId = document.getString("clubAdminOf");
-                                Log.d("JHM", "Club ID found: " + clubId);
+                                Log.d("동아링", "Club ID found: " + clubId);
 
                                 if (clubId != null && !clubId.isEmpty()) {
                                     // 2. 해당 동아리의 이벤트 불러오기
                                     fetchClubEvents(clubId);
                                 } else {
-                                    Log.d("JHM", "clubAdminOf 필드가 비어있습니다.");
+                                    Log.d("동아링", "clubAdminOf 필드가 비어있습니다.");
                                 }
 
                                 // 한 명의 유저는 하나의 관리자 문서만 갖는다고 가정하고 종료
                                 break;
                             }
                         } else {
-                            Log.d("JHM", "관리자 정보 없음");
+                            Log.d("동아링", "관리자 정보 없음");
                         }
                     } else {
-                        Log.d("JHM", "Error finding admin user: ", task.getException());
+                        Log.d("동아링", "Error finding admin user: ", task.getException());
                     }
                 });
     }
@@ -182,7 +182,7 @@ public class AdminCalendarFragment extends Fragment {
     }
 
     private void fetchClubEvents(String clubId) {
-        Log.d("JHM", "fetchClubEvents 시작. 대상 동아리 ID: " + clubId);
+        Log.d("동아링", "fetchClubEvents 시작. 대상 동아리 ID: " + clubId);
 
         // 컬렉션 이름 "evnets" 유지
         db.collection("clubs").document(clubId).collection("events")
@@ -190,11 +190,11 @@ public class AdminCalendarFragment extends Fragment {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         if (task.getResult() == null || task.getResult().isEmpty()) {
-                            Log.d("JHM", "이벤트 검색 결과 없음");
+                            Log.d("동아링", "이벤트 검색 결과 없음");
                             return;
                         }
 
-                        Log.d("JHM", "이벤트 문서 개수: " + task.getResult().size());
+                        Log.d("동아링", "이벤트 문서 개수: " + task.getResult().size());
 
                         for (com.google.firebase.firestore.QueryDocumentSnapshot document : task.getResult()) {
                             try {
@@ -202,7 +202,7 @@ public class AdminCalendarFragment extends Fragment {
                                 String startDateStr = document.getString("startDate"); // "2025-12-25 10:34"
                                 String endDateStr = document.getString("endDate");     // "2025-12-27 14:00"
 
-                                Log.d("JHM", "이벤트 파싱 시도 - Title: " + title + ", Start: " + startDateStr + ", End: " + endDateStr);
+                                Log.d("동아링", "이벤트 파싱 시도 - Title: " + title + ", Start: " + startDateStr + ", End: " + endDateStr);
 
                                 if (startDateStr != null && endDateStr != null) {
                                     // 공백을 기준으로 날짜와 시간 분리 ("2025-12-25 10:34" -> "2025-12-25")
@@ -222,7 +222,7 @@ public class AdminCalendarFragment extends Fragment {
                                         int endMonth = Integer.parseInt(endParts[1]);
                                         int endDay = Integer.parseInt(endParts[2]);
 
-                                        Log.d("JHM", "날짜 변환 성공: " + startYear + "-" + startMonth + "-" + startDay + " ~ " + endYear + "-" + endMonth + "-" + endDay);
+                                        Log.d("동아링", "날짜 변환 성공: " + startYear + "-" + startMonth + "-" + startDay + " ~ " + endYear + "-" + endMonth + "-" + endDay);
 
                                         // 시간 추출
                                         String timeString = (startDateStr.split(" ").length > 1) ? startDateStr.split(" ")[1] : "00:00";
@@ -235,13 +235,13 @@ public class AdminCalendarFragment extends Fragment {
                                                 title
                                         );
                                     } else {
-                                        Log.d("JHM", "날짜 포맷 오류 (split length != 3): " + startDateStr);
+                                        Log.d("동아링", "날짜 포맷 오류 (split length != 3): " + startDateStr);
                                     }
                                 } else {
-                                    Log.d("JHM", "날짜 필드가 null임");
+                                    Log.d("동아링", "날짜 필드가 null임");
                                 }
                             } catch (Exception e) {
-                                Log.d("JHM", "Error parsing event: " + e.getMessage());
+                                Log.d("동아링", "Error parsing event: " + e.getMessage());
                             }
                         }
 
@@ -262,7 +262,7 @@ public class AdminCalendarFragment extends Fragment {
                             });
                         }
                     } else {
-                        Log.d("JHM", "Error getting events: ", task.getException());
+                        Log.d("동아링", "Error getting events: ", task.getException());
                     }
                 });
     }

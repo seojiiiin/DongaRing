@@ -72,13 +72,13 @@ public class SuggestActivity extends AppCompatActivity {
     }
 
     private void loadClubNames(String type, View textView) {
-        Log.d("Firestore", "loadClubNames 호출됨: type=" + type);
+        Log.d("동아링", "loadClubNames 호출됨: type=" + type);
 
         db.collection("clubs")
                 .whereEqualTo("type", type)
                 .get()
                 .addOnSuccessListener(q -> {
-                    Log.d("Firestore", "성공! 문서 개수: " + q.size());
+                    Log.d("동아링", "성공! 문서 개수: " + q.size());
                     StringBuilder builder = new StringBuilder();
                     for (QueryDocumentSnapshot doc : q) {
                         String name = doc.getString("name");
@@ -92,7 +92,7 @@ public class SuggestActivity extends AppCompatActivity {
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Log.e("Firestore", "에러 발생:", e);
+                    Log.d("동아링", "에러 발생:", e);
                     ((TextView) textView).setText("데이터 불러오기 실패");
                 });
 
