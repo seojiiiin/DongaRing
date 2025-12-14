@@ -112,54 +112,66 @@ public class CalendarFragment extends Fragment {
             return;
         }
 
-        if (clubID != null) {
-            fetchClubEvents(clubID);
-            return;
-        }
-
-        db.collection("clubs").get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                if (task.getResult() != null) {
-                    for (com.google.firebase.firestore.QueryDocumentSnapshot clubDoc : task.getResult()) {
-                        fetchClubEvents(clubDoc.getId());
+        // 1. 먼저 Users 컬렉션에서 유저의 가입된 동아리 목록(joinedClubs)을 가져옴
+        db.collection("users").document(user.getUid()).get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    // joinedClubs 필드 가져오기 (List<String> 형태라고 가정)
+                    List<String> joinedClubs = (List<String>) documentSnapshot.get("joinedClubs");
+                    if (joinedClubs == null) {
+                        joinedClubs = new ArrayList<>();
                     }
-                }
-            } else {
-                Log.e("JHM", "Error getting clubs: ", task.getException());
-            }
-        });
+                    final List<String> finalJoinedClubs = joinedClubs;
+
+                    // 2. Clubs 컬렉션 전체 순회
+                    db.collection("clubs").get().addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            if (task.getResult() != null) {
+                                for (QueryDocumentSnapshot clubDoc : task.getResult()) {
+                                    // 클럽 ID와 가입된 동아리 목록을 함께 넘김
+                                    fetchClubEvents(clubDoc.getId(), finalJoinedClubs);
+                                }
+                            }
+                        } else {
+                            Log.e("JHM", "Error getting clubs: ", task.getException());
+                        }
+                    });
+                })
+                .addOnFailureListener(e -> Log.e("JHM", "Error getting user info: ", e));
     }
 
-    private void fetchClubEvents(String clubId) {
+    private void fetchClubEvents(String clubId, List<String> joinedClubs) {
         // 1. 먼저 "events" (정상 철자)로 시도
         db.collection("clubs").document(clubId).collection("events")
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult() != null && !task.getResult().isEmpty()) {
-                        parseAndShowEvents(task.getResult());
+                        parseAndShowEvents(task.getResult(), clubId, joinedClubs);
                     } else {
                         // 2. 실패하면 "evnets" (오타)로 재시도
                         db.collection("clubs").document(clubId).collection("evnets")
                                 .get()
                                 .addOnCompleteListener(retryTask -> {
                                     if (retryTask.isSuccessful() && retryTask.getResult() != null && !retryTask.getResult().isEmpty()) {
-                                        parseAndShowEvents(retryTask.getResult());
+                                        parseAndShowEvents(retryTask.getResult(), clubId, joinedClubs);
                                     }
                                 });
                     }
                 });
     }
 
-    private void parseAndShowEvents(QuerySnapshot result) {
+    private void parseAndShowEvents(QuerySnapshot result, String clubId, List<String> joinedClubs) {
         for (QueryDocumentSnapshot document : result) {
             try {
-                // 1. Visibility 처리 (Boolean -> String 변경)
+                // 1. 조건 확인
+                // - 가입한 동아리인가? (joinedClubs에 clubId가 포함되는지)
+                // - 공개 범위가 "전체"인가?
                 String visibility = document.getString("visibility");
+                boolean isJoinedClub = joinedClubs.contains(clubId);
+                boolean isPublicEvent = "전체".equals(visibility);
 
-                // "전체"나 "내 동아리"가 아닌 null이거나 이상한 값이면 건너뛰고 싶을 경우 로직 추가 가능
-                // 현재 구조에서는 동아리 가입 여부를 이 함수 내에서 알 수 없으므로, 데이터가 유효하면 일단 표시하도록 작성합니다.
-                if (visibility == null) {
-                    // visibility 필드가 없으면 기본적으로 보여주거나 숨깁니다. (여기서는 pass)
+                // 둘 다 아니라면(가입하지 않았는데 전체 공개도 아님) 스킵
+                if (!isJoinedClub && !isPublicEvent) {
+                    continue;
                 }
 
                 String title = document.getString("title");
@@ -222,6 +234,7 @@ public class CalendarFragment extends Fragment {
             });
         }
     }
+
 
     private void addEvent(int startYear, int startMonth, int startDay,
                           int endYear, int endMonth, int endDay,
