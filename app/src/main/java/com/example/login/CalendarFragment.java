@@ -67,7 +67,13 @@ public class CalendarFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         user = mAuth.getCurrentUser();
-
+        binding.gear.setOnClickListener(v -> {
+            getParentFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.full_screen_container, new SettingFragment("user"))
+                    .addToBackStack(null)
+                    .commit();
+        });
         MaterialCalendarView calendarView = binding.calendar;
 
         // 오늘날짜를 targetDate로 설정

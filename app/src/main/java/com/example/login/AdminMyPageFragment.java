@@ -89,6 +89,13 @@ public class AdminMyPageFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        binding.gear.setOnClickListener(v -> {
+            getParentFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.full_screen_container, new SettingFragment("admin"))
+                    .addToBackStack(null)
+                    .commit();
+        });
         getParentFragmentManager().setFragmentResultListener(
                 "event_added", this, (key, bundle) -> {
                     boolean success = bundle.getBoolean("success", false);

@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.example.login.databinding.FragmentSettingBinding;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -24,15 +25,8 @@ import com.google.firebase.auth.FirebaseAuth;
  * create an instance of this fragment.
  */
 public class SettingFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    //다른 페이지에서 파라미터로 유저타입 넘어옴(user, admin)
+    private String userType;
 
     private FragmentSettingBinding binding;
     private AlertDialog logoutDialog;
@@ -67,25 +61,18 @@ public class SettingFragment extends Fragment {
         }
     };
 
+    public SettingFragment(){
 
-    public SettingFragment() {
+    }
+    public SettingFragment(String userType) {
+        this.userType = userType;
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment SettingFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static SettingFragment newInstance(String param1, String param2) {
-        SettingFragment fragment = new SettingFragment();
+
+    public static SettingFragment newInstance(String userType) {
+        SettingFragment fragment = new SettingFragment(userType);
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -94,8 +81,7 @@ public class SettingFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            this.userType = userType;
         }
     }
 
@@ -110,14 +96,41 @@ public class SettingFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        //뒤로가기버튼
         binding.back.setOnClickListener(v -> {
             getParentFragmentManager()
                     .beginTransaction()
                     .remove(this)
                     .commit();
         });
+        
+        //유저 이름, 이메일 불러오기
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        String uid =FirebaseAuth.getInstance().getCurrentUser().getUid();
 
+        String collectionName = userType.equals("user") ? "users" : "users_admin";
+        if (uid != null) {
+            db.collection(collectionName).document(uid)
+                    .get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        if (documentSnapshot.exists()) {
+                            // 데이터 가져오기 성공
+                            String name = documentSnapshot.getString("name");
+                            String email = documentSnapshot.getString("email");
+                            binding.name.setText(name);
+                            binding.email.setText(email);
+
+                            Log.d("JHM", "사용자 정보 로드 성공: " + name);
+                        } else {
+                            Log.d("JHM", "해당 문서가 존재하지 않습니다.");
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e("JHM", "데이터 가져오기 실패", e);
+                    });
+        }
+        
+        //알람버튼
         binding.alarmSetting.setOnClickListener(v -> {
             dialogType = DIALOG_NOTIFICATION;
 
@@ -137,7 +150,8 @@ public class SettingFragment extends Fragment {
             alarmDialog.show();
 
         });
-
+        
+        //로그아웃버튼
         binding.logout.setOnClickListener(v -> {
             dialogType = DIALOG_LOGOUT;
 
