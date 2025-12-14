@@ -68,7 +68,9 @@ public class SuggestActivity extends AppCompatActivity {
             }
         }
 
-        binding.startButton.setOnClickListener(v -> startActivity(new Intent(SuggestActivity.this, MyPageActivity.class)));
+        binding.startButton.setOnClickListener(v ->
+                startActivity(new Intent(SuggestActivity.this, MainActivity.class))
+        );
     }
 
     private void loadClubNames(String type, View textView) {

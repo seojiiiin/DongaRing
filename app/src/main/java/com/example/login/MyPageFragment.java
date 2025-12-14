@@ -181,7 +181,7 @@ public class MyPageFragment extends Fragment {
                                                     CardModel model = new CardModel(
                                                             eventName != null ? eventName : "제목 없음",
                                                             clubName != null ? clubName : "동아리",
-                                                            R.drawable.logo, // 이미지 로딩 로직 필요시 수정
+                                                            R.drawable.image, // 이미지 로딩 로직 필요시 수정
                                                             ymd[0], ymd[1], ymd[2]
                                                     );
                                                     list.add(model);

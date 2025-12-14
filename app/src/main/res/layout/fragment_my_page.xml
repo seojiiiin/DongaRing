@@ -155,7 +155,7 @@
                 android:background="@drawable/checkbox_background"
                 android:backgroundTint="#F9F9FD"
                 android:padding="14dp"
-                android:text="신청한 동아리가 없습니다.\n동아리 목록을 눌러보세요"
+                android:text="가입한 동아리가 없습니다.\n동아리 목록을 눌러보세요"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:visibility="gone" />

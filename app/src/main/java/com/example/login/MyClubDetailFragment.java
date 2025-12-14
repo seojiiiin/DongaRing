@@ -136,11 +136,11 @@ public class MyClubDetailFragment extends Fragment {
                                                 if (!userDoc.exists()) return;
 
                                                 String name = userDoc.getString("name");
-                                                String studentId = userDoc.getString("studentId");
+                                                String studentId = userDoc.getString("studentNumber");
 
                                                 Map<String, Object> applyData = new HashMap<>();
                                                 applyData.put("name", name);
-                                                applyData.put("studentId", studentId);
+                                                applyData.put("studentNumber", studentId);
                                                 applyData.put("uid", uid);
                                                 applyData.put("timestamp", FieldValue.serverTimestamp());
 
