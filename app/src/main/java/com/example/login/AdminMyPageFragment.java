@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -236,8 +237,9 @@ public class AdminMyPageFragment extends Fragment {
                                         String title = eventDoc.getString("title");
                                         String startDate = eventDoc.getString("startDate");
                                         int[] date = parseDate(startDate);
+                                        String documentID = eventDoc.getId();
                                         String imageUri = eventDoc.getString("imageUri");
-                                        eventList.add(new CardModel(title, clubName, imageUri, date[0], date[1], date[2]));
+                                        eventList.add(new CardModel(title, clubName, imageUri, documentID, date[0], date[1], date[2]));
                                         Log.d("동아링", "행사명: " + title + ", 시작일: " + startDate);
                                     }
                                     if(eventAdapter != null) eventAdapter.notifyDataSetChanged();
@@ -263,15 +265,17 @@ public class AdminMyPageFragment extends Fragment {
         private final String title;
         private final String clubName;
         private final String image;
+        private final String documentID;
 
         private final int year;
         private final int month;
         private final int date;
 
-        public CardModel(String title, String clubName, String image, int year, int month, int date) {
+        public CardModel(String title, String clubName, String image, String documentID, int year, int month, int date) {
             this.title = title;
             this.clubName = clubName;
             this.image = image;
+            this.documentID = documentID;
             this.year = year;
             this.month = month;
             this.date = date;
@@ -285,7 +289,9 @@ public class AdminMyPageFragment extends Fragment {
         public String getImage() {
             return image;
         }
-
+        public String getDocumentID() {
+            return documentID;
+        }
         public int getYear() {
             return year;
         }
@@ -360,12 +366,14 @@ public class AdminMyPageFragment extends Fragment {
             private final TextView dateArea;
             private final TextView titleArea;
             private final TextView amountArea;
+            private final Button viewButton;
             public EventViewHolder(@NonNull View itemView) {
                 super(itemView);
                 imageArea = itemView.findViewById(R.id.imageArea);
                 dateArea = itemView.findViewById(R.id.dateArea);
                 titleArea = itemView.findViewById(R.id.titleArea);
                 amountArea = itemView.findViewById(R.id.amountArea);
+                viewButton = itemView.findViewById(R.id.viewButton);
             }
             public void bind(CardModel event) {
                 // Glide로 Firestore의 imageUri 로딩
@@ -398,6 +406,20 @@ public class AdminMyPageFragment extends Fragment {
                 };
                 String dateText = event.getYear() + " " + month + " " + event.getDate();
                 dateArea.setText(dateText);
+
+                viewButton.setOnClickListener(v->{
+                    Bundle bundle = new Bundle();
+                    bundle.putString("documentID", event.getDocumentID());
+
+                    EventDetail detail = new EventDetail();
+                    detail.setArguments(bundle);
+
+                    getParentFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.full_screen_container, detail)
+                            .addToBackStack(null)
+                            .commit();
+                });
             }
         }
     }
