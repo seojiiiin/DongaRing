@@ -20,6 +20,8 @@ import com.example.login.databinding.FragmentCalendarBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.DayViewDecorator;
 import com.prolificinteractive.materialcalendarview.DayViewFacade;
@@ -107,12 +109,10 @@ public class CalendarFragment extends Fragment {
             return;
         }
 
-        // 모든 동아리(clubs)를 가져와서 이벤트를 조회합니다.
         db.collection("clubs").get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 if (task.getResult() != null) {
                     for (com.google.firebase.firestore.QueryDocumentSnapshot clubDoc : task.getResult()) {
-                        // 각 동아리 문서 ID를 이용해 이벤트 조회 함수 호출
                         fetchClubEvents(clubDoc.getId());
                     }
                 }
@@ -142,23 +142,38 @@ public class CalendarFragment extends Fragment {
                 });
     }
 
-    private void parseAndShowEvents(com.google.firebase.firestore.QuerySnapshot result) {
-        for (com.google.firebase.firestore.QueryDocumentSnapshot document : result) {
+    private void parseAndShowEvents(QuerySnapshot result) {
+        for (QueryDocumentSnapshot document : result) {
             try {
-                // visibility 체크
-                Boolean visibility = document.getBoolean("visibility");
-                if (visibility != null && !visibility) continue;
+                // 1. Visibility 처리 (Boolean -> String 변경)
+                String visibility = document.getString("visibility");
+
+                // "전체"나 "내 동아리"가 아닌 null이거나 이상한 값이면 건너뛰고 싶을 경우 로직 추가 가능
+                // 현재 구조에서는 동아리 가입 여부를 이 함수 내에서 알 수 없으므로, 데이터가 유효하면 일단 표시하도록 작성합니다.
+                if (visibility == null) {
+                    // visibility 필드가 없으면 기본적으로 보여주거나 숨깁니다. (여기서는 pass)
+                }
 
                 String title = document.getString("title");
-                // 날짜 형식이 "yyyy-MM-dd HH:mm" 이거나 "yyyy-MM-dd" 일 수 있음
-                String startDateStr = document.getString("startDate");
-                String endDateStr = document.getString("endDate");
+                String startDateStr = document.getString("startDate"); // 예: "2025-12-09 10:48"
+                String endDateStr = document.getString("endDate");     // 예: "2025-12-09 12:00"
 
                 if (startDateStr != null && endDateStr != null) {
-                    // 공백으로 잘라서 날짜 부분만 가져옴 (예: "2025-12-25 10:34" -> "2025-12-25")
-                    String datePartStart = startDateStr.contains(" ") ? startDateStr.split(" ")[0] : startDateStr;
-                    String datePartEnd = endDateStr.contains(" ") ? endDateStr.split(" ")[0] : endDateStr;
+                    // 2. 날짜와 시간 분리 (공백 기준)
+                    String[] startFullParts = startDateStr.trim().split(" ");
+                    String[] endFullParts = endDateStr.trim().split(" ");
 
+                    // 날짜 부분 (yyyy-MM-dd)
+                    String datePartStart = startFullParts[0];
+                    String datePartEnd = endFullParts[0];
+
+                    // 시간 부분 (HH:mm) - 시간이 없으면 "00:00" 처리
+                    String timeString = "00:00";
+                    if (startFullParts.length > 1) {
+                        timeString = startFullParts[1];
+                    }
+
+                    // 날짜 파싱 ("-" 기준 분리)
                     String[] startParts = datePartStart.split("-");
                     String[] endParts = datePartEnd.split("-");
 
@@ -171,13 +186,7 @@ public class CalendarFragment extends Fragment {
                         int endMonth = Integer.parseInt(endParts[1]);
                         int endDay = Integer.parseInt(endParts[2]);
 
-                        // 시간 문자열 추출 (없으면 00:00)
-                        String timeString = "00:00";
-                        if (startDateStr.contains(" ")) {
-                            String[] parts = startDateStr.split(" ");
-                            if (parts.length > 1) timeString = parts[1];
-                        }
-
+                        // 파싱된 정보를 바탕으로 이벤트 추가 함수 호출
                         addEvent(startYear, startMonth, startDay, endYear, endMonth, endDay, timeString, title);
                     }
                 }
@@ -191,7 +200,7 @@ public class CalendarFragment extends Fragment {
             getActivity().runOnUiThread(() -> {
                 binding.calendar.removeDecorators();
                 binding.calendar.addDecorator(new TodayDecorator());
-                // 2. Event Decorator (Blue)
+                // 3. Event Decorator (Blue) -> 파싱된 eventDates 기반으로 점 찍기
                 binding.calendar.addDecorator(new EventDecorator(eventDates));
                 binding.calendar.invalidateDecorators(); // 강제 갱신
 
@@ -274,7 +283,7 @@ public class CalendarFragment extends Fragment {
     }
 
     // Event Model Class
-    private static class Event {
+    class Event {
         String time;
         String title;
 
