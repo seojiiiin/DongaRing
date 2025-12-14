@@ -134,24 +134,24 @@ public class ClubInformFragment extends Fragment {
 
         /// users의 문서에 appliedClubs 라는 필드로 동아리 uid들의 배열이 생긴다고 가정하고
         /// 신청버튼 활성화 유무를 결정한 것이기 때문에 db 구조에 따라 변경 해야할 수도 있음
-//        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-//
-//        db.collection("users")
-//                .document(userId)
-//                .get()
-//                .addOnSuccessListener(doc -> {
-//                    if (!doc.exists()) return;
-//
-//                    List<String> appliedClubs = (List<String>) doc.get("appliedClubs");
-//
-//                    if (appliedClubs != null && appliedClubs.contains(clubID)) {
-//                        binding.applyBtn.setText("신청 완료");
-//                        binding.applyBtn.setEnabled(false);
-//                    } else {
-//                        binding.applyBtn.setText("가입신청 하러가기");
-//                        binding.applyBtn.setEnabled(true);
-//                    }
-//                });
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        db.collection("users")
+                .document(userId)
+                .get()
+                .addOnSuccessListener(doc -> {
+                    if (!doc.exists()) return;
+
+                    List<String> appliedClubs = (List<String>) doc.get("appliedClubs");
+
+                    if (appliedClubs != null && appliedClubs.contains(clubID)) {
+                        binding.applyBtn.setText("신청 완료");
+                        binding.applyBtn.setEnabled(false);
+                    } else {
+                        binding.applyBtn.setText("가입신청 하러가기");
+                        binding.applyBtn.setEnabled(true);
+                    }
+                });
 
 
 
