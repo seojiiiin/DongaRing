@@ -113,8 +113,6 @@ public class MyPageFragment extends Fragment {
         });
 
         List<CardModel> eventList = new ArrayList<>();
-        //eventList.add(new CardModel("이벤트 이름1", "동아리 이름1", R.drawable.logo, 2024, 10, 22));
-        //eventList.add(new CardModel("이벤트 이름2", "동아리 이름2", R.drawable.logo, 2024, 11, 22));
         RecyclerView eventRecyclerView = binding.eventList;
         eventRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         EventAdapter eventAdapter = new EventAdapter(eventList);
@@ -173,6 +171,7 @@ public class MyPageFragment extends Fragment {
                                         if (finalIsJoined || isPublicEvent) {
                                             String eventName = eventDoc.getString("title");
                                             String startDate = eventDoc.getString("startDate"); // "2024-11-22 10:00"
+                                            String imageUri = eventDoc.getString("imageUri");
 
                                             if (startDate != null) {
                                                 try {
@@ -181,7 +180,7 @@ public class MyPageFragment extends Fragment {
                                                     CardModel model = new CardModel(
                                                             eventName != null ? eventName : "제목 없음",
                                                             clubName != null ? clubName : "동아리",
-                                                            R.drawable.image, // 이미지 로딩 로직 필요시 수정
+                                                            imageUri, // 이미지 로딩 로직 필요시 수정
                                                             ymd[0], ymd[1], ymd[2]
                                                     );
                                                     list.add(model);
@@ -336,13 +335,13 @@ public class MyPageFragment extends Fragment {
     class CardModel {
         private final String title;
         private final String clubName;
-        private final int image;
+        private final String image;
 
         private final int year;
         private final int month;
         private final int date;
 
-        public CardModel(String title, String clubName, int image, int year, int month, int date) {
+        public CardModel(String title, String clubName, String image, int year, int month, int date) {
             this.title = title;
             this.clubName = clubName;
             this.image = image;
@@ -356,7 +355,7 @@ public class MyPageFragment extends Fragment {
         public String getClubName() {
             return clubName;
         }
-        public int getImage() {
+        public String getImage() {
             return image;
         }
 
@@ -451,7 +450,16 @@ public class MyPageFragment extends Fragment {
 
             // 데이터를 뷰에 설정하는 메서드
             public void bind(CardModel event) {
-                imageArea.setImageResource(event.getImage());
+                if (event.getImage() != null && !event.getImage().isEmpty()) {
+                    Glide.with(itemView.getContext())
+                            .load(event.getImage())
+                            .placeholder(R.drawable.image)   // 로딩 중
+                            .error(R.drawable.image)         // 실패 시
+                            .centerCrop()
+                            .into(imageArea);
+                } else {
+                    imageArea.setImageResource(R.drawable.image);
+                }
                 titleArea.setText(event.getTitle());
                 amountArea.setText(event.getClubName());
 
