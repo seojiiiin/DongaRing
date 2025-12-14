@@ -45,7 +45,13 @@ public class MyClubActivity extends AppCompatActivity {
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.nav_calendar) {
-                transferTo(CalendarFragment.newInstance());
+                Bundle bundle = new Bundle();
+                bundle.putString("clubID", clubID);
+
+                CalendarFragment calendarFragment = new CalendarFragment();
+                calendarFragment.setArguments(bundle);
+
+                transferTo(calendarFragment);
                 return true;
             }
             if (itemId == R.id.nav_joinRecord) {

@@ -17,6 +17,7 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
@@ -133,14 +134,14 @@ public class FavoritesFragment extends Fragment {
         private final String clubId;   // ✅ clubs 문서ID
         private final String clubName;
         private final String description;
-        private final int image;
+        private final String logo;
         private boolean isFavorites;
 
-        public ClubModel(String clubId, String clubName, String description, int image, boolean isFavorites){
+        public ClubModel(String clubId, String clubName, String description, String  image, boolean isFavorites){
             this.clubId = clubId;
             this.clubName = clubName;
             this.description = description;
-            this.image = image;
+            this.logo = image;
             this.isFavorites = isFavorites;
         }
 
@@ -149,7 +150,7 @@ public class FavoritesFragment extends Fragment {
         public void setFavorites(boolean favorites) { isFavorites = favorites; }
         public String getClubName() { return clubName; }
         public String getDescription() { return description; }
-        public int getImage() { return image; }
+        public String getLogo() { return logo; }
     }
 
     private void loadFavoriteClubsFromDB() {
@@ -199,11 +200,12 @@ public class FavoritesFragment extends Fragment {
                             String clubId = doc.getId();
                             String name = doc.getString("name");
                             String desc = doc.getString("activities");
+                            String image = doc.getString("logo");
 
                             if (name == null) name = "(이름 없음)";
                             if (desc == null) desc = "";
 
-                            favoriteList.add(new ClubModel(clubId, name, desc, R.drawable.logo, true));
+                            favoriteList.add(new ClubModel(clubId, name, desc, image, true));
                         }
                     }
 
@@ -263,7 +265,16 @@ public class FavoritesFragment extends Fragment {
 
             holder.tvName.setText(item.getClubName());
             holder.tvDesc.setText(item.getDescription());
-            holder.ivImage.setImageResource(item.getImage());
+            if (item.getLogo() != null && !item.getLogo().isEmpty()) {
+                Glide.with(holder.itemView.getContext())
+                        .load(item.getLogo())
+                        .placeholder(R.drawable.logo)
+                        .error(R.drawable.logo)
+                        .centerCrop()
+                        .into(holder.ivImage);
+            } else {
+                holder.ivImage.setImageResource(R.drawable.logo);
+            }
 
             // 즐겨찾기 화면이므로 무조건 꽉 찬 하트로 시작
             holder.btnFavorite.setImageResource(R.drawable.ic_heart_filled);

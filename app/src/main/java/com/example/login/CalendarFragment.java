@@ -41,6 +41,7 @@ public class CalendarFragment extends Fragment {
     private FirebaseAuth mAuth;
     private FirebaseUser user;
     private FirebaseFirestore db;
+    private String clubID;
 
     // 이벤트를 Map으로 저장 (Key : CalendarDay, Value : 이벤트 목록 List)
     private Map<CalendarDay, List<Event>> eventMap = new HashMap<>();
@@ -84,7 +85,9 @@ public class CalendarFragment extends Fragment {
         calendarView.setCurrentDate(targetDate);
         calendarView.setSelectedDate(targetDate);
 
-        // Load events from Firebase
+        if (getArguments() != null){
+            clubID = getArguments().getString("clubID");
+        }
         loadEvents();
 
         // 데코레이터 생성
@@ -106,6 +109,11 @@ public class CalendarFragment extends Fragment {
 
         if (user == null) {
             Log.d("JHM", "user is null");
+            return;
+        }
+
+        if (clubID != null) {
+            fetchClubEvents(clubID);
             return;
         }
 
