@@ -27,7 +27,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ApplyManageActivity extends AppCompatActivity{
+public class ApplyManageActivity extends AppCompatActivity {
 
     private List<Applicant> applicantList;
     private ApplicantAdapter adapter;
@@ -39,11 +39,22 @@ public class ApplyManageActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_apply_manage);
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        db = FirebaseFirestore.getInstance();
+
+        clubID = getIntent().getStringExtra("clubID");
+        if (clubID == null) {
+            Toast.makeText(this, "clubID 없음", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
         RecyclerView profileList = findViewById(R.id.rv_profile_list);
         ImageView btnBack = findViewById(R.id.btn_back);
         AppCompatButton btn_pass = findViewById(R.id.btn_pass);
@@ -55,7 +66,8 @@ public class ApplyManageActivity extends AppCompatActivity{
         adapter = new ApplicantAdapter(applicantList);
         profileList.setAdapter(adapter);
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        LinearLayoutManager layoutManager =
+                new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         profileList.setLayoutManager(layoutManager);
 
         //신청인원 불러오기
@@ -81,20 +93,19 @@ public class ApplyManageActivity extends AppCompatActivity{
             }
         });
 
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("JHM", "Back Clicked");
-                finish();
-            }
+        // 신청자 프로필 클릭 시 지원서 표시
+        adapter.setOnItemClickListener(applicant -> {
+            selectedUid = applicant.getUid();
+            loadApplicantForm(selectedUid);
         });
-        btn_pass.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("JHM", "Pass Clicked");
-                //TODO : firebase에서 합격처리
-            }
+
+        btnBack.setOnClickListener(v -> {
+            Log.d("JHM", "Back Clicked");
+            finish();
         });
+
+        // 합격 처리
+        btn_pass.setOnClickListener(v -> processPass());
     }
     private void loadAdminClubInfo() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -174,14 +185,72 @@ public class ApplyManageActivity extends AppCompatActivity{
             this.motivation = motivation;
         }
 
-        public String getName() {
-            return name;
+
+    // 신청한 유저 목록 가져오기
+    private void loadApplicants() {
+        db.collection("clubs")
+                .document(clubID)
+                .collection("applicants")
+                .get()
+                .addOnSuccessListener(query -> {
+                    applicantList.clear();
+
+                    for (DocumentSnapshot doc : query) {
+                        String uid = doc.getId();
+                        String name = doc.getString("name");
+
+                        applicantList.add(new Applicant(uid, name));
+                    }
+
+                    adapter.notifyDataSetChanged();
+                });
+    }
+
+
+    // 특정 지원자의 신청서 가져오기
+    private void loadApplicantForm(String uid) {
+
+        db.collection("clubs")
+                .document(clubID)
+                .collection("applicants")
+                .document(uid)
+                .get()
+                .addOnSuccessListener(doc -> {
+
+                    if (!doc.exists()) return;
+
+                    TextView name = findViewById(R.id.et_name);
+                    TextView collage = findViewById(R.id.collage);
+                    TextView department = findViewById(R.id.department);
+                    TextView studentId = findViewById(R.id.student_id);
+                    TextView phoneNum = findViewById(R.id.phone_num);
+                    TextView motivation = findViewById(R.id.motivation);
+
+                    name.setText(doc.getString("name"));
+                    collage.setText(doc.getString("major"));
+                    department.setText(doc.getString("department"));
+                    studentId.setText(doc.getString("studentNumber"));
+                    phoneNum.setText(doc.getString("phone"));
+                    motivation.setText(doc.getString("motivation"));
+                });
+    }
+
+
+    // 합격 처리
+    private void processPass() {
+
+        if (selectedUid == null) {
+            Toast.makeText(this, "지원자를 선택하세요.", Toast.LENGTH_SHORT).show();
+            return;
         }
         public String getMajor() { return major; }
         public String getStudentNumber() { return studentNumber; }
         public String getPhone() { return phone; }
         public String getMotivation() { return motivation; }
     }
+
+
+    // RecyclerView Adapter
     public class ApplicantAdapter extends RecyclerView.Adapter<ApplicantAdapter.ViewHolder> {
 
         private List<Applicant> applicantList;
@@ -189,6 +258,7 @@ public class ApplyManageActivity extends AppCompatActivity{
         public interface OnItemClickListener {
             void onItemClick(Applicant applicant);
         }
+
         private OnItemClickListener listener;
 
         public ApplicantAdapter(List<Applicant> applicantList) {
@@ -202,7 +272,6 @@ public class ApplyManageActivity extends AppCompatActivity{
         @NonNull
         @Override
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            // item_applicant_profile.xml 레이아웃을 inflate
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_applicant_profile_vertical, parent, false);
             return new ViewHolder(view);
@@ -219,9 +288,8 @@ public class ApplyManageActivity extends AppCompatActivity{
             return applicantList.size();
         }
 
-        public static class ViewHolder extends RecyclerView.ViewHolder {
+        public class ViewHolder extends RecyclerView.ViewHolder {
             TextView tvName;
-            // ImageView ivProfile; // 프로필 이미지가 있다면
 
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -231,13 +299,9 @@ public class ApplyManageActivity extends AppCompatActivity{
             public void bind(final Applicant item, final OnItemClickListener listener) {
                 tvName.setText(item.getName());
 
-                // 아이템 클릭 리스너 설정
-                itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (listener != null) {
-                            listener.onItemClick(item);
-                        }
+                itemView.setOnClickListener(v -> {
+                    if (listener != null) {
+                        listener.onItemClick(item);
                     }
                 });
             }

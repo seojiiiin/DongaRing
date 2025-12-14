@@ -132,6 +132,21 @@ public class ClubInformFragment extends Fragment {
                 );
 
 
+        View chatRow = view.findViewById(R.id.chatInquiryRow);
+
+        chatRow.setOnClickListener(v -> {
+            ChatRoomFragment f = new ChatRoomFragment();
+            Bundle b = new Bundle();
+            b.putString("clubId", clubID);
+            f.setArguments(b);
+
+            getParentFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.full_screen_container, f) // 여기 컨테이너 id를 프로젝트에 맞게
+                    .addToBackStack(null)
+                    .commit();
+        });
+
         /// users의 문서에 appliedClubs 라는 필드로 동아리 uid들의 배열이 생긴다고 가정하고
         /// 신청버튼 활성화 유무를 결정한 것이기 때문에 db 구조에 따라 변경 해야할 수도 있음
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
