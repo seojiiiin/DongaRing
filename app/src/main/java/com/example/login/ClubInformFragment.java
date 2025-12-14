@@ -96,7 +96,7 @@ public class ClubInformFragment extends Fragment {
                     binding.clubName.setText(doc.getString("name"));
                     binding.clubDescription.setText(doc.getString("activities"));
                 }).addOnFailureListener(e -> {
-                    Log.w("LSJ", "Error getting documents.", e);
+                    Log.d("동아링", "Error getting documents.", e);
                 });
 
         // 동아리 사진 불러오기
@@ -128,7 +128,7 @@ public class ClubInformFragment extends Fragment {
                     adapter.notifyDataSetChanged();
                 })
                 .addOnFailureListener(e ->
-                        Log.e("LSJ", "Failed to load events", e)
+                        Log.d("동아링", "Failed to load events", e)
                 );
 
 
@@ -174,7 +174,7 @@ public class ClubInformFragment extends Fragment {
                                 });
                                 }
                             }).addOnFailureListener(e -> {
-                            Log.w("LSJ", "Error getting documents.", e);
+                            Log.d("동아링", "Error getting documents.", e);
                         });
 
         db.collection("users")
@@ -261,7 +261,7 @@ public class ClubInformFragment extends Fragment {
             holder.eventTitle.setText(event.getTitle());
 
             String imageUrl = event.getImageUri();
-            Log.d("LSJ", "image uri= " + imageUrl);
+            Log.d("동아링", "image uri= " + imageUrl);
 
             if (imageUrl == null || imageUrl.isEmpty()) {
                 holder.posterImage.setImageResource(R.drawable.image);

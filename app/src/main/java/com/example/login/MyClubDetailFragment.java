@@ -93,7 +93,7 @@ public class MyClubDetailFragment extends Fragment {
                                     binding.joinButton.setVisibility(View.VISIBLE);
                             }
                         })
-                .addOnFailureListener(e -> { Log.w("LSJ", "Error getting documents.");
+                .addOnFailureListener(e -> { Log.d("동아링", "Error getting documents.");
                 });
 ;
 

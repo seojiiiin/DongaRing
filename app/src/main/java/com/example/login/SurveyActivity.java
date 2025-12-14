@@ -64,7 +64,7 @@ public class SurveyActivity extends AppCompatActivity implements CompoundButton.
 
 
         if (category != null) {
-            Log.d("LSJ", category + " " + isChecked);
+            Log.d("동아링", category + " " + isChecked);
             if (isChecked) selected.add(category);
             else selected.remove(category);
         }

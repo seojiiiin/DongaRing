@@ -115,12 +115,12 @@ public class ApplyManageActivity extends AppCompatActivity {
                         return;
                     }
 
-                    Log.d("JHM", "관리자 동아리 ID 확인: " + clubId);
+                    Log.d("동아링", "관리자 동아리 ID 확인: " + clubId);
 
                     loadApplicants(clubId);
                 })
                 .addOnFailureListener(e ->
-                        Log.e("JHM", "관리자 정보 로드 실패", e));
+                        Log.d("동아링", "관리자 정보 로드 실패", e));
     }
 
     // applicants 컬렉션에서 지원자 목록 불러오기
@@ -130,7 +130,7 @@ public class ApplyManageActivity extends AppCompatActivity {
                 .get()
                 .addOnCompleteListener(task -> {
                     if (!task.isSuccessful()) {
-                        Log.e("JHM", "신청자 목록 로드 실패: ", task.getException());
+                        Log.d("동아링", "신청자 목록 로드 실패: ", task.getException());
                         return;
                     }
 

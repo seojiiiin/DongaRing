@@ -117,11 +117,11 @@ public class MainActivity extends AppCompatActivity {
                                 }
 
                                 // 관리자 확인 완료 → 관리자 화면 이동
-                                Log.d("LSJ", "Admin login success");
+                                Log.d("동아링", "Admin login success");
                                 startActivity(new Intent(MainActivity.this, AdminMyPageActivity.class));
                             })
                             .addOnFailureListener(e -> {
-                                Log.w("LSJ", "Error checking admin status", e);
+                                Log.d("동아링", "Error checking admin status", e);
                             });
                 });
     }
@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
                     if (!task.isSuccessful()) {
                         // Authentication 로그인 실패
-                        Log.w("LSJ", "signInWithEmail:failure", task.getException());
+                        Log.d("동아링", "signInWithEmail:failure", task.getException());
                         Toast.makeText(MainActivity.this,
                                 "로그인 실패: 존재하지 않는 계정이거나 비밀번호가 틀렸습니다.",
                                 Toast.LENGTH_LONG).show();
@@ -184,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
                             })
                             .addOnFailureListener(e -> {
                                 // Firestore 요청 실패 → 로그인 실패 처리
-                                Log.e("LSJ", "Error getting user document", e);
+                                Log.d("동아링", "Error getting user document", e);
                                 Toast.makeText(MainActivity.this,
                                         "서버 오류로 사용자 정보를 불러올 수 없습니다.",
                                         Toast.LENGTH_LONG).show();
@@ -198,9 +198,9 @@ public class MainActivity extends AppCompatActivity {
         if (user != null) {
             String info = "로그인 성공!";
             Toast.makeText(this, info, Toast.LENGTH_LONG).show();
-            Log.d("LSJ", info);
+            Log.d("동아링", info);
         } else {
-            Log.w("LSJ", "updateUI : user is null");
+            Log.d("동아링", "updateUI : user is null");
         }
     }
 

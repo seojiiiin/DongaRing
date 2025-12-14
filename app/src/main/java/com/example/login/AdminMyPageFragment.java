@@ -100,7 +100,7 @@ public class AdminMyPageFragment extends Fragment {
                 "event_added", this, (key, bundle) -> {
                     boolean success = bundle.getBoolean("success", false);
                     if (success) {
-                        Log.d("LSJ", "이벤트 목록을 새로고침");
+                        Log.d("동아링", "이벤트 목록을 새로고침");
                         eventList.clear();  // 기존 리스트 초기화
                         searchEvents(binding.userName.getText().toString()); // Firestore에서 다시 불러오기
                     }
@@ -114,7 +114,7 @@ public class AdminMyPageFragment extends Fragment {
         //user 이름 불러오기
         user = mAuth.getCurrentUser();
         if (user == null) {
-            Log.d("JHM", "user is null");
+            Log.d("동아링", "user is null");
             return;
         }
         //users_admin컬렉션에서 유저이름 찾아서 텍스트뷰에 설정
@@ -131,11 +131,11 @@ public class AdminMyPageFragment extends Fragment {
                         binding.userName.setText(userName);
                         searchEvents(userName);
                         clubManage(userName);
-                        Log.d("JHM", "userName: " + userName);
+                        Log.d("동아링", "userName: " + userName);
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Log.w("JHM", "Error getting documents.", e);
+                    Log.d("동아링", "Error getting documents.", e);
                 });
         RecyclerView eventRecyclerView = binding.eventList;
         eventRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
@@ -166,7 +166,7 @@ public class AdminMyPageFragment extends Fragment {
     }
     //가입신청자 관리 뷰 추가
     private void clubManage(String userName) {
-        Log.d("JHM", "clubManage 함수 호출");
+        Log.d("동아링", "clubManage 함수 호출");
         db.collection("clubs")
                 .whereEqualTo("president", userName) // 회장 이름으로 필터링
                 .get()
@@ -184,7 +184,7 @@ public class AdminMyPageFragment extends Fragment {
                         clubView.findViewById(R.id.apply_button).setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                Log.d("JHM", "신청현황 버튼 클릭");
+                                Log.d("동아링", "신청현황 버튼 클릭");
                                 startActivity(new Intent(getActivity(), ApplyManageActivity.class));
                             }
                         });
@@ -198,13 +198,13 @@ public class AdminMyPageFragment extends Fragment {
 
                         clubContainer.addView(clubView);
 
-                        Log.d("JHM", "내 동아리 정보 로드 성공: " + name);
+                        Log.d("동아링", "내 동아리 정보 로드 성공: " + name);
                     } else {
-                        Log.d("JHM", "관리 중인 동아리가 없습니다.");
+                        Log.d("동아링", "관리 중인 동아리가 없습니다.");
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Log.w("JHM", "동아리 정보 가져오기 실패", e);
+                    Log.d("동아링", "동아리 정보 가져오기 실패", e);
                 });
     }
 
@@ -217,7 +217,7 @@ public class AdminMyPageFragment extends Fragment {
                         DocumentSnapshot clubDoc = query.getDocuments().get(0);
                         String clubId = clubDoc.getId();
                         String clubName = clubDoc.getString(name);
-                        Log.d("JHM", "찾은 동아리ID : " + clubId);
+                        Log.d("동아링", "찾은 동아리ID : " + clubId);
                         db.collection("clubs").document(clubId).collection("events")
                                 .get()
                                 .addOnSuccessListener(eventQuery -> {
@@ -228,17 +228,17 @@ public class AdminMyPageFragment extends Fragment {
                                         int[] date = parseDate(startDate);
                                         String imageUri = eventDoc.getString("imageUri");
                                         eventList.add(new CardModel(title, clubName, imageUri, date[0], date[1], date[2]));
-                                        Log.d("JHM", "행사명: " + title + ", 시작일: " + startDate);
+                                        Log.d("동아링", "행사명: " + title + ", 시작일: " + startDate);
                                     }
                                     if(eventAdapter != null) eventAdapter.notifyDataSetChanged();
                                 })
                                 .addOnFailureListener(e -> {
-                                    Log.w("JHM", "evnets 가져오기 실패", e);
+                                    Log.d("동아링", "evnets 가져오기 실패", e);
                                 });
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Log.d("JHM", "동아리 검색 실패.", e);
+                    Log.d("동아링", "동아리 검색 실패.", e);
                 });
     }
     private int[] parseDate(String dateString) {

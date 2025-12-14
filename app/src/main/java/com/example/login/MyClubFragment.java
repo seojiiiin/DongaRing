@@ -88,7 +88,7 @@ public class MyClubFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
         if (clubID == null) {
-            Log.d("JHM", "clubID is null. Cannot load data.");
+            Log.d("동아링", "clubID is null. Cannot load data.");
             return;
         }
         db = FirebaseFirestore.getInstance();
@@ -107,7 +107,7 @@ public class MyClubFragment extends Fragment {
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Log.w("LSJ", "Error getting documents.", e);
+                    Log.d("동아링", "Error getting documents.", e);
                 });
 
         List<EventModel> myClubEvents = new ArrayList<>();
@@ -129,14 +129,14 @@ public class MyClubFragment extends Fragment {
                             EventModel event = new EventModel(doc.getId(), eventTitle, "동아리 이름", startDate, image);
                             myClubEvents.add(event);
 
-                            Log.d("LSJ", "Event loaded: " + eventTitle);
+                            Log.d("동아링", "Event loaded: " + eventTitle);
                         }
 
                         myClubAdapter.notifyDataSetChanged();
 
-                    } else Log.d("LSJ", "No events found");
+                    } else Log.d("동아링", "No events found");
                 })
-                .addOnFailureListener(e -> Log.e("LSJ", "Failed to load events.", e));
+                .addOnFailureListener(e -> Log.d("동아링", "Failed to load events.", e));
 
     }
 

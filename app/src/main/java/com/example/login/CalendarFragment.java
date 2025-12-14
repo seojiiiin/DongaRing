@@ -108,7 +108,7 @@ public class CalendarFragment extends Fragment {
         eventDates.clear();
 
         if (user == null) {
-            Log.d("JHM", "user is null");
+            Log.d("동아링", "user is null");
             return;
         }
 
@@ -132,11 +132,11 @@ public class CalendarFragment extends Fragment {
                                 }
                             }
                         } else {
-                            Log.e("JHM", "Error getting clubs: ", task.getException());
+                            Log.d("동아링", "Error getting clubs: ", task.getException());
                         }
                     });
                 })
-                .addOnFailureListener(e -> Log.e("JHM", "Error getting user info: ", e));
+                .addOnFailureListener(e -> Log.d("동아링", "Error getting user info: ", e));
     }
 
     private void fetchClubEvents(String clubId, List<String> joinedClubs) {
@@ -211,7 +211,7 @@ public class CalendarFragment extends Fragment {
                     }
                 }
             } catch (Exception e) {
-                Log.e("JHM", "Error parsing event data: " + e.getMessage());
+                Log.d("동아링", "Error parsing event data: " + e.getMessage());
             }
         }
 

@@ -71,12 +71,12 @@ public class EventDetail extends Fragment {
                                 //동아리 ID를 알았으니 이제 이벤트 상세 정보 로드
                                 loadEventDetails(currentClubID, docID);
                             } else {
-                                Log.e("EventDetail", "User is not an admin of any club");
+                                Log.d("동아링", "User is not an admin of any club");
                                 Toast.makeText(getContext(), "동아리 관리자 권한이 없습니다.", Toast.LENGTH_SHORT).show();
                             }
                         }
                     })
-                    .addOnFailureListener(e -> Log.e("EventDetail", "Failed to fetch user info", e));
+                    .addOnFailureListener(e -> Log.d("동아링", "Failed to fetch user info", e));
         } else {
             Toast.makeText(getContext(), "로그인이 필요합니다.", Toast.LENGTH_SHORT).show();
         }
@@ -139,7 +139,7 @@ public class EventDetail extends Fragment {
 
                     }
                 })
-                .addOnFailureListener(e -> Log.w("LSJ", "fail to load document", e));
+                .addOnFailureListener(e -> Log.d("동아링", "fail to load document", e));
     }
 
     class ApplyModel{

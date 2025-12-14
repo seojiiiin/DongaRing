@@ -118,18 +118,18 @@ public class ClubListFragment extends Fragment {
                     // 람다식 내부에서 사용하기 위해 final 변수로 저장
                     final List<String> finalMyFavorites = myFavorites;
 
-                    Log.d("JHM", "동아리 목록 불러오기 시작");
+                    Log.d("동아링", "동아리 목록 불러오기 시작");
                     db.collection("clubs")
                             .get()
                             .addOnCompleteListener(task -> {
                                 if (task.isSuccessful()) {
                                     // 기존 리스트 초기화
                                     clubList.clear();
-                                    Log.d("JHM", "문서 가져오기 성공");
+                                    Log.d("동아링", "문서 가져오기 성공");
                                     int count = task.getResult().size();
-                                    Log.d("JHM", "가져온 문서 개수: " + count);
+                                    Log.d("동아링", "가져온 문서 개수: " + count);
                                     if (count == 0) {
-                                        Log.d("JHM", "주의: 컬렉션은 찾았으나 문서가 없습니다. Firestore 컬렉션 이름('clubs')이 정확한지 확인하세요.");
+                                        Log.d("동아링", "주의: 컬렉션은 찾았으나 문서가 없습니다. Firestore 컬렉션 이름('clubs')이 정확한지 확인하세요.");
                                     }
                                     for (QueryDocumentSnapshot document : task.getResult()) {
                                         //필드 값 가져오기
@@ -137,7 +137,7 @@ public class ClubListFragment extends Fragment {
                                         String description = document.getString("activities"); // activities 내용을 설명으로 사용
                                         String type = document.getString("type");
                                         String docId = document.getId();
-                                        Log.d("JHM", "문서 ID: " + document.getId() + ", 데이터: " + document.getData());
+                                        Log.d("동아링", "문서 ID: " + document.getId() + ", 데이터: " + document.getData());
                                         // 이미지 URL 필드가 있다면 가져오기 (없으면 null 처리되어 어댑터에서 기본 이미지 사용)
                                         String image = document.getString("logo");
 
@@ -151,7 +151,7 @@ public class ClubListFragment extends Fragment {
                                     adapter = new ClubAdapter(clubList);
                                     recyclerView.setAdapter(adapter);
                                 } else {
-                                    Log.d("JHM", "Error getting documents: ", task.getException());
+                                    Log.d("동아링", "Error getting documents: ", task.getException());
                                 }
                             });
                 });

@@ -93,7 +93,7 @@ public class MemberManageFragment extends Fragment {
         //DB에서 부원목록 불러오기
         if (user != null) {
             String currentUid = user.getUid();
-            Log.d("JHM", "로그인된 유저 UID: [" + currentUid + "]");
+            Log.d("동아링", "로그인된 유저 UID: [" + currentUid + "]");
             
             db.collection("users_admin")
                     .whereEqualTo("uid", currentUid)  // uid 필드가 currentUid와 같은 문서 찾기
@@ -102,27 +102,27 @@ public class MemberManageFragment extends Fragment {
                         if (task.isSuccessful()) {
                             // 결과가 비어있지 않은지 확인
                             if (!task.getResult().isEmpty()) {
-                                Log.d("JHM", "관리자 문서 발견");
+                                Log.d("동아링", "관리자 문서 발견");
 
                                 DocumentSnapshot document = task.getResult().getDocuments().get(0);
 
                                 String clubId = document.getString("clubAdminOf");
                                 if (clubId != null && !clubId.isEmpty()) {
-                                    Log.d("JHM", "동아리 ID 발견: " + clubId);
+                                    Log.d("동아링", "동아리 ID 발견: " + clubId);
                                     getClubMembers(clubId);
                                 } else {
-                                    Log.e("JHM", "실패: clubAdminOf 필드가 비어있음");
+                                    Log.d("동아링", "실패: clubAdminOf 필드가 비어있음");
                                 }
                             } else {
                                 // 쿼리 결과가 0개일 때
-                                Log.e("JHM", "실패: users_admin 컬렉션에서 uid 필드가 [" + currentUid + "]인 문서를 찾지 못함");
+                                Log.d("동아링", "실패: users_admin 컬렉션에서 uid 필드가 [" + currentUid + "]인 문서를 찾지 못함");
                             }
                         } else {
-                            Log.e("JHM", "통신 에러 발생", task.getException());
+                            Log.d("동아링", "통신 에러 발생", task.getException());
                         }
                     });
         } else {
-            Log.e("JHM", "로그인 정보 없음 (user is null)");
+            Log.d("동아링", "로그인 정보 없음 (user is null)");
         }
     }
     private void getClubMembers(String clubId) {
@@ -142,9 +142,9 @@ public class MemberManageFragment extends Fragment {
                             memberList.add(new Member(name, studentNumber != null ? studentNumber : ""));
                         }
                         adapter.notifyDataSetChanged(); // 리사이클러뷰 갱신
-                        Log.d("JHM", "프로필 로드 완료, 갯수 : " + memberList.size());
+                        Log.d("동아링", "프로필 로드 완료, 갯수 : " + memberList.size());
                     } else {
-                        Log.w("JHM", "Error getting documents.", task.getException());
+                        Log.d("동아링", "Error getting documents.", task.getException());
                     }
                 });
     }

@@ -79,17 +79,17 @@ public class SignUpActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         FirebaseUser user = mAuth.getCurrentUser();
                         if (user == null) {
-                            Log.w("LSJ", "user is null after signup");
+                            Log.d("동아링", "user is null after signup");
                             return;
                         }
 
                         Toast.makeText(this, "회원가입 성공", Toast.LENGTH_SHORT).show();
-                        Log.d("LSJ", "회원가입 성공: " + user.getUid());
+                        Log.d("동아링", "회원가입 성공: " + user.getUid());
                         createDB(name, number, email);
 
                     } else {
                         Toast.makeText(this, "회원가입 실패", Toast.LENGTH_SHORT).show();
-                        Log.w("LSJ", "회원가입 실패", task.getException());
+                        Log.d("동아링", "회원가입 실패", task.getException());
                     }
                 });
     }
@@ -100,7 +100,7 @@ public class SignUpActivity extends AppCompatActivity {
                 .get()
                 .addOnSuccessListener(query -> {
                     if (!query.isEmpty()) {
-                        Log.d("LSJ", "student number exists");
+                        Log.d("동아링", "student number exists");
                         Toast.makeText(this, "이미 존재하는 학번입니다.", Toast.LENGTH_SHORT).show();
                         return;
                     }
@@ -108,7 +108,7 @@ public class SignUpActivity extends AppCompatActivity {
                     createUser(name, number, email, password);
                 })
                 .addOnFailureListener(e -> {
-                    Log.w("LSJ", "Error getting documents.", e)
+                    Log.d("동아링", "Error getting documents.", e)
 ;                   Toast.makeText(this, "오류 발생", Toast.LENGTH_SHORT).show();
                 });
 
@@ -118,7 +118,7 @@ public class SignUpActivity extends AppCompatActivity {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
         if (currentUser == null) {
-            Log.w("LSJ", "currentUser is null");
+            Log.d("동아링", "currentUser is null");
             return;
         }
 
@@ -136,7 +136,7 @@ public class SignUpActivity extends AppCompatActivity {
                     // 동기화 호출
                     updateJoinedClubs(currentUser.getUid(), number);
 
-                    Log.d("LSJ", "Document added with UID");
+                    Log.d("동아링", "Document added with UID");
 
                     //다음 화면 이동
                     Intent intent = new Intent(SignUpActivity.this, SurveyActivity.class);
@@ -144,7 +144,7 @@ public class SignUpActivity extends AppCompatActivity {
                     finish();
                 })
                 .addOnFailureListener(e ->
-                        Log.w("LSJ", "Error adding document", e));
+                        Log.d("동아링", "Error adding document", e));
     }
 
     private void updateJoinedClubs(String uid, String studentNumber) {
@@ -171,7 +171,7 @@ public class SignUpActivity extends AppCompatActivity {
                                                 .update("joinedClubs",
                                                         com.google.firebase.firestore.FieldValue.arrayUnion(clubId))
                                                 .addOnSuccessListener(a -> {
-                                                    Log.d("SYNC", "User joinedClubs updated: " + clubId);
+                                                    Log.d("동아링", "User joinedClubs updated: " + clubId);
                                                 });
                                     }
 
