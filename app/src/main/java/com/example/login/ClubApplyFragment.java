@@ -10,6 +10,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -69,14 +78,62 @@ public class ClubApplyFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        String uid = auth.getCurrentUser().getUid();
+
         Button submitBtn = view.findViewById(R.id.submitBtn);
 
-        /// db에 신청 정보 저장하는 로직 필요!!
+        // 입력 필드 가져오기
+        EditText nameInput = view.findViewById(R.id.name);
+        EditText majorInput = view.findViewById(R.id.major);
+        EditText studentNumberInput = view.findViewById(R.id.studentNumber);
+        EditText phoneInput = view.findViewById(R.id.phoneNumber);
+        EditText motivationInput = view.findViewById(R.id.motivation);
+
         submitBtn.setOnClickListener(v -> {
-            Bundle afterApply = new Bundle();
-            afterApply.putString("afterApply", "신청 완료");
-            getParentFragmentManager().setFragmentResult("afterApply", afterApply);
-            getParentFragmentManager().popBackStack();
+
+            // 1) 입력값 가져오기
+            String name = nameInput.getText().toString();
+            String major = majorInput.getText().toString();
+            String studentNumber = studentNumberInput.getText().toString();
+            String phone = phoneInput.getText().toString();
+            String motivation = motivationInput.getText().toString();
+
+            // 입력값 Map
+            Map<String, Object> applyData = new HashMap<>();
+            applyData.put("uid", uid);
+            applyData.put("name", name);
+            applyData.put("major", major);
+            applyData.put("studentNumber", studentNumber);
+            applyData.put("phone", phone);
+            applyData.put("motivation", motivation);
+            applyData.put("timestamp", FieldValue.serverTimestamp());
+
+            // 2) clubs → clubID → applicants → uid 로 저장
+            db.collection("clubs")
+                    .document(clubID)
+                    .collection("applicants")
+                    .document(uid)
+                    .set(applyData)
+                    .addOnSuccessListener(unused -> {
+
+                        // 3) users → uid → appliedClubs 배열에 clubID 추가
+                        db.collection("users")
+                                .document(uid)
+                                .update("appliedClubs", FieldValue.arrayUnion(clubID))
+                                .addOnSuccessListener(done -> {
+
+                                    Toast.makeText(requireContext(), "지원이 완료되었습니다!", Toast.LENGTH_SHORT).show();
+
+                                    // 결과 전달 + 이전 화면으로
+                                    Bundle afterApply = new Bundle();
+                                    afterApply.putString("afterApply", "신청 완료");
+                                    getParentFragmentManager().setFragmentResult("afterApply", afterApply);
+                                    getParentFragmentManager().popBackStack();
+                                });
+                    });
         });
     }
+
 }
