@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.login.databinding.FragmentMyPageBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -125,12 +126,12 @@ public class MyPageFragment extends Fragment {
         loadAppliedClubs(clubListContainer);
 
 
-
-
         // 가입한 동아리 목록 불러오기
         LinearLayout registeredClubListContainer = binding.registeredClubListContainer;
         loadRegisteredClubs(registeredClubListContainer);
-    }private void loadJoinedClubEvents(List<CardModel> list, EventAdapter adapter) {
+    }
+
+    private void loadJoinedClubEvents(List<CardModel> list, EventAdapter adapter) {
         // 1. clubs 컬렉션의 모든 문서(모든 동아리)를 가져옴
         db.collection("clubs")
                 .get()
@@ -236,7 +237,7 @@ public class MyPageFragment extends Fragment {
                                                 // 동아리 정보 추출 (이름, 활동내용)
                                                 String name = clubDoc.getString("name");
                                                 String description = clubDoc.getString("activities");
-                                                int image = R.drawable.logo; // 기본 이미지
+                                                String image = clubDoc.getString("logo"); // 기본 이미지
 
                                                 // 뷰 생성 및 데이터 바인딩
                                                 View clubView = inflater.inflate(R.layout.club_cardview, clubListContainer, false);
@@ -244,8 +245,15 @@ public class MyPageFragment extends Fragment {
                                                 ImageView clubLogo = clubView.findViewById(R.id.club_logo_area);
                                                 TextView clubName = clubView.findViewById(R.id.club_name_text);
                                                 TextView clubDescription = clubView.findViewById(R.id.club_desc_text);
+                                                ImageView arrowButton = clubView.findViewById(R.id.arrow_button);
+                                                arrowButton.setVisibility(View.GONE);
 
-                                                clubLogo.setImageResource(image);
+                                                Glide.with(clubLogo.getContext())
+                                                        .load(image)   // Firestore에 넣은 logo URL
+                                                        .placeholder(R.drawable.image)
+                                                        .error(R.drawable.image)
+                                                        .into(clubLogo);
+
                                                 if (name != null) clubName.setText(name);
                                                 if (description != null) clubDescription.setText(description);
 
@@ -280,7 +288,7 @@ public class MyPageFragment extends Fragment {
                         if (doc.exists()) {
                             String name = doc.getString("name");
                             String description = doc.getString("activities");
-                            int image = R.drawable.logo;
+                            String image = doc.getString("logo");
 
                             ClubModel club = new ClubModel(name, description, image);
                             registeredClubList.add(club);
@@ -292,7 +300,11 @@ public class MyPageFragment extends Fragment {
                             ImageView arrowButton = clubView.findViewById(R.id.arrow_button);
 
 
-                            clubLogo.setImageResource(club.getImage());
+                            Glide.with(clubLogo.getContext())
+                                    .load(club.getLogo())   // Firestore에 넣은 logo URL
+                                    .placeholder(R.drawable.image)
+                                    .error(R.drawable.image)
+                                    .into(clubLogo);
 
 
                             clubName.setText(club.getClubName());
@@ -368,12 +380,12 @@ public class MyPageFragment extends Fragment {
     class ClubModel {
         private final String clubName;
         private final String description;
-        private final int image;
+        private final String logo;
 
-        public ClubModel(String clubName, String description, int image){
+        public ClubModel(String clubName, String description, String logo){
             this.clubName = clubName;
             this.description = description;
-            this.image = image;
+            this.logo = logo;
         }
 
         public String getClubName() {
@@ -384,12 +396,12 @@ public class MyPageFragment extends Fragment {
             return description;
         }
 
-        public int getImage() {
-            return image;
+        public String getLogo() {
+            return logo;
         }
         @Override
         public String toString(){
-            return "CardModel{" + "clubName='" + clubName + '\'' + ", description='" + description + '\'' + ", image=" + image + '}';
+            return "CardModel{" + "clubName='" + clubName + '\'' + ", description='" + description + '\'' + ", image=" + logo + '}';
         }
     }
     class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {
